@@ -9,6 +9,11 @@ import pyqtgraph as pg
 from numpy import math
 ListX=[]
 ListZ=[]
+List_Yei=[]
+List_Xei=[]
+List_Ypki=[]
+List_Xpki=[]
+
 #Основное окно
 class MyWindow(QMainWindow):
     def __init__(self,parent=None):
@@ -125,8 +130,8 @@ class MyWindow(QMainWindow):
         # Создаем списки 
         List_dyi=[]
         List_Di=[]
-        List_Yei=[]
-        List_Xei=[]
+        global List_Yei
+        global List_Xei
         List_Minus_Xei=[]
         List_Xdai=[]
         List_Ydai=[]
@@ -134,8 +139,8 @@ class MyWindow(QMainWindow):
         List_Ai=[]
         List_Bi=[]
         List_fi=[]
-        List_Ypki=[]
-        List_Xpki=[]
+        global List_Ypki
+        global List_Xpki
         List_Minus_Xpki=[]
         # Заполняем нуливой (первый )индекс списка значениями
         List_dyi.append(dyi)
@@ -260,31 +265,36 @@ class MyWindow(QMainWindow):
     
     
     def TextEvolvent(self):
-        i=0
-        self.textEdit_toch.clear()
-       # Создаем новые листы для текстового поля 
-        List_Axis_Z=[]
-        List_Axis_X=[]
+       
         List_Axis_X1=[]
-        #в цикле  заполняем листы
-        for i in range(0,199,1):    
-           
-           List_Axis_Z.append(round(ListZ[i],3)) 
+        List_Axis_Z1=[]
+        List_Axis_X=List_Xei+List_Xpki
+        List_Axis_Z=List_Yei+List_Ypki
         i=0
-        for i in range(0,199,1):    
-            
-           List_Axis_X.append(round(ListX[i],3))
-           List_Axis_X1.append(round(ListX[i]+1,3))
-        # В цикле заполняем текстовое поле    
-        i=0
-        for i in range(0,199,1):
-           Var_X =List_Axis_X[i]
-           Var_Z =List_Axis_Z[i]  
-          # print(Var_X,Var_Z)
-                  
-           self.textEdit_toch.append(str(Var_X)+","+str(Var_Z))
+        for i in range(len(List_Axis_X)):
+            List_Axis_X1.append(List_Axis_X[i]-(List_Axis_X[199]+List_Axis_X[0]/2)) 
+            #List_Axis_X1.append(-List_Axis_X[i])    
+            List_Axis_Z1.append(List_Axis_Z[i])
+        print(List_Axis_X1[0],List_Axis_X[199])       
+        self.plot(List_Axis_Z1, List_Axis_X1, "Perehod", 'g')
+       
+
+       
         
-        self.plot(List_Axis_Z,List_Axis_X1, "Naryg", 'g')
+       
+        Var_X_list=[]
+        Var_Z_list=[]
+        # В цикле заполняем текстовое поле   
+        self.textEdit_toch.clear()  
+        i=0
+        for i in range(len(List_Axis_X)):
+           Var_X =List_Axis_X1[i]
+           Var_Z =List_Axis_Z1[i]  
+           Var_X_list.append(-List_Axis_X1[i]) 
+           Var_Z_list.append(List_Axis_Z1[i])      
+           self.textEdit_toch.append(str(round(-Var_X,3))+","+(str(round(Var_Z,3))))
+        self.plot(Var_Z_list, Var_X_list, "Perehod", 'g')
+       
 
 
 
