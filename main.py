@@ -7,7 +7,8 @@ from PyQt5 import uic, QtCore, QtGui, QtWidgets
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 from numpy import math
-
+ListX=[]
+ListZ=[]
 #Основное окно
 class MyWindow(QMainWindow):
     def __init__(self,parent=None):
@@ -208,29 +209,31 @@ class MyWindow(QMainWindow):
         List_Minus_Xpki.append(-List_Xpki[99])
 
         #склыдываем листы в одну кривую 
+        global ListX
         ListX =  List_Xei + List_Xpki 
+        global ListZ
         ListZ =  List_Yei + List_Ypki  
         # Заполняем текстовое поле   результатами 
         # сбрасываем переменные в 0 
-        i=0
-        self.textEdit_toch.clear()
+        #i=0
+        #self.textEdit_toch.clear()
        # Создаем новые листы для текстового поля 
-        List_Axis_Z=[]
-        List_Axis_X=[]
+        #List_Axis_Z=[]
+        #List_Axis_X=[]
         #в цикле  заполняем листы
-        for i in range(199,0,-1):    
+        #for i in range(199,0,-1):    
            
-            List_Axis_Z.append(round(ListZ[i],3)) 
-        i=0
-        for i in range(0,199,1):    
+            #List_Axis_Z.append(round(ListZ[i],3)) 
+        #i=0
+        #for i in range(0,199,1):    
             
-            List_Axis_X.append(round(ListX[i],3))
+            #List_Axis_X.append(round(ListX[i],3))
         # В цикле заполняем текстовое поле    
-        i=0
-        for i in range(198,0,-1):
-            Var_X=List_Axis_X[i]
-            Var_Z=List_Axis_Z[i]     
-            self.textEdit_toch.append(str(Var_X)+","+str(Var_Z))
+        #i=0
+        #for i in range(198,0,-1):
+            #Var_X=List_Axis_X[i]
+            #Var_Z=List_Axis_Z[i]     
+            #self.textEdit_toch.append(str(Var_X)+","+str(Var_Z))
 
         #рисуем профиль зуба 
         self.graphWidget.clear() 
@@ -242,20 +245,46 @@ class MyWindow(QMainWindow):
         self.plot(List_Ypki, List_Minus_Xpki, "mPerehod", 'r')
 
         self.plot(List_Ydai, List_Xdai, "Naryg", 'g')    
-
+        self.TextEvolvent()
     def plot(self,x, y, plotname, color):
        #функция отрисовки графика 
        #переменная цвет линии
-       pen = pg.mkPen(color=color)
+        pen = pg.mkPen(color=color)
        #надпись наименование осей 
-       self.graphWidget.setLabel('left', 'Ось Х', color='red', size=30)
-       self.graphWidget.setLabel('bottom', 'Ось Z', color='red', size=30)
+        self.graphWidget.setLabel('left', 'Ось Х', color='red', size=30)
+        self.graphWidget.setLabel('bottom', 'Ось Z', color='red', size=30)
        #включаем сетку
-       self.graphWidget.showGrid(x=True, y=True)
+        self.graphWidget.showGrid(x=True, y=True)
        #рисуем сам график 
-       self.graphWidget.plot(x, y, name=plotname, pen=pen, symbol='o', symbolSize=10, symbolBrush=(color))
-
-
+        self.graphWidget.plot(x, y, name=plotname, pen=pen, symbol='o', symbolSize=10, symbolBrush=(color))
+    
+    
+    def TextEvolvent(self):
+        i=0
+        self.textEdit_toch.clear()
+       # Создаем новые листы для текстового поля 
+        List_Axis_Z=[]
+        List_Axis_X=[]
+        List_Axis_X1=[]
+        #в цикле  заполняем листы
+        for i in range(0,199,1):    
+           
+           List_Axis_Z.append(round(ListZ[i],3)) 
+        i=0
+        for i in range(0,199,1):    
+            
+           List_Axis_X.append(round(ListX[i],3))
+           List_Axis_X1.append(round(ListX[i]+1,3))
+        # В цикле заполняем текстовое поле    
+        i=0
+        for i in range(0,199,1):
+           Var_X =List_Axis_X[i]
+           Var_Z =List_Axis_Z[i]  
+          # print(Var_X,Var_Z)
+                  
+           self.textEdit_toch.append(str(Var_X)+","+str(Var_Z))
+        
+        self.plot(List_Axis_Z,List_Axis_X1, "Naryg", 'g')
 
 
 
