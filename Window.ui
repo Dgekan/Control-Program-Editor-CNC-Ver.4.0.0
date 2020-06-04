@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -452,6 +452,45 @@
       </property>
       <property name="text">
        <string>Профиль марианской впадины</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxZub">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>660</y>
+        <width>86</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Зуб</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxVpadina">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>660</y>
+        <width>86</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Впадину</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_38">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>660</y>
+        <width>61</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Показать:</string>
       </property>
      </widget>
     </widget>
@@ -904,32 +943,6 @@
       </widget>
      </item>
     </layout>
-   </widget>
-   <widget class="QCheckBox" name="checkBoxZub">
-    <property name="geometry">
-     <rect>
-      <x>730</x>
-      <y>750</y>
-      <width>86</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Зуб</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBoxVpadina">
-    <property name="geometry">
-     <rect>
-      <x>820</x>
-      <y>750</y>
-      <width>86</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Впадина</string>
-    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

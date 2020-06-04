@@ -212,21 +212,28 @@ class MyWindow(QMainWindow):
         List_Xpki.append((List_Ai[99] * math.sin(fi)-List_Bi[99] * math.cos(List_fi[99])) * m)
         List_Minus_Xpki.append(-List_Xpki[99])
 
+        self.GragEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki)
         self.TextEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki)
-        #рисуем профиль зуба 
-       
+        self.WiPfileZub(List_Yei,List_Xei,List_Minus_Xei,List_Ypki,List_Xpki,List_Minus_Xpki,
+            List_Ydai,List_Xdai)
+
+    def WiPfileZub(self,Yei,Xei,Minus_Xei,Ypki,Xpki,Minus_Xpki,Ydai,Xdai):
+        """   Рисуем профиль зуба 
+              
+             
+        """
         #Отправляем листы на прорисовку в график 
-        if WiVpadinaValue == True:
-           # self.graphWidget.clear() 
-            self.plot(List_Yei, List_Xei, "Evalvent", 'b')
-            self.plot(List_Yei, List_Minus_Xei, "mEvalvent", 'b')
+        if WiZubValue == True:
+         
+            self.plot(Yei,Xei, "Evalvent", 'b')
+            self.plot(Yei,Minus_Xei, "mEvalvent", 'b')
 
-            self.plot(List_Ypki, List_Xpki, "Perehod", 'b')
-            self.plot(List_Ypki, List_Minus_Xpki, "mPerehod", 'b')
+            self.plot(Ypki,Xpki, "Perehod", 'b')
+            self.plot(Ypki,Minus_Xpki, "mPerehod", 'b')
 
-            self.plot(List_Ydai, List_Xdai, "Naryg", 'b')    
+            self.plot(Ydai,Xdai, "Naryg", 'b')    
         
-       
+    
 
     def plot(self,x, y, plotname, color):
        #функция отрисовки графика 
@@ -242,34 +249,45 @@ class MyWindow(QMainWindow):
         self.graphWidget.plot(x, y, name=plotname, pen=pen, symbol='o', symbolSize=10, symbolBrush=(color))
     
     
-    def TextEvolvent(self,AxisX,AxisZ):
-       # self.graphWidget.clear()
-        List_Axis_X1=[]
-        List_Axis_Z1=[]
-        List_Axis_X=AxisX
-        List_Axis_Z=AxisZ
+    def GragEvolvent(self,AxisX,AxisZ):
+        """ Эта функция выводит на график  профель впадины\n
+            AxisX= [1,2,3] или [1,2,3] +[4,5,6] нужно вставить Лист  \n
+            AxisZ= [1,2,3] или [1,2,3] +[4,5,6] нужно вставить Лист  
+        """
+        List_Axis_X=[]
+        List_Axis_Z=[]
         i=0
-        for i in range(len(List_Axis_X)):
-            List_Axis_X1.append(List_Axis_X[i]-(List_Axis_X[199]+List_Axis_X[0]/2)) 
-            #List_Axis_X1.append(-List_Axis_X[i])    
-            List_Axis_Z1.append(List_Axis_Z[i])
-        print(List_Axis_X1[0],List_Axis_X[199])  
-        if WiZubValue == True:     
-            self.plot(List_Axis_Z1, List_Axis_X1, "Perehod", 'g')
-       
+        for i in range(len(AxisX)):
+            List_Axis_X.append(AxisX[i]-(AxisX[199]+AxisX[0]/2)) 
+            List_Axis_Z.append(AxisZ[i])
+     
+        if WiVpadinaValue == True:     
+            self.plot(List_Axis_Z, List_Axis_X, "Vpadina", 'g')
+         
         Var_X_list=[]
         Var_Z_list=[]
         # В цикле заполняем текстовое поле   
         self.textEdit_toch.clear()  
         i=0
-        for i in range(len(List_Axis_X)):
-           Var_X =List_Axis_X1[i]
-           Var_Z =List_Axis_Z1[i]  
-           Var_X_list.append(-List_Axis_X1[i]) 
-           Var_Z_list.append(List_Axis_Z1[i])      
-           self.textEdit_toch.append(str(round(-Var_X,3))+","+(str(round(Var_Z,3))))
-        if WiZubValue == True:   
-           self.plot(Var_Z_list, Var_X_list, "Perehod", 'g')
+        for i in range(len(AxisX)):
+           Var_X_list.append(-List_Axis_X[i]) 
+           Var_Z_list.append(List_Axis_Z[i])      
+    
+        if WiVpadinaValue == True:   
+           self.plot(Var_Z_list, Var_X_list, "Vpadina", 'g')
+
+
+    def TextEvolvent(self,AxisX,AxisZ):
+        """Комент к функции пичать начальных точек \n
+          TextEvolvent(self,AxisX,AxisZ) \n
+          AxisX= [1,2,3] или [1,2,3] +[4,5,6] нужно вставить Лист  \n
+          AxisZ= [1,2,3] или [1,2,3] +[4,5,6] нужно вставить Лист 
+        """       
+        for i in range(len(AxisX)):
+            Var_X =AxisX[i]
+            Var_Z =AxisZ[i]    
+            self.textEdit_toch.append(str(round(-Var_X,3))+","+(
+                str(round(Var_Z,3))))    
        
 
     def WiZub(self,val):
@@ -285,6 +303,8 @@ class MyWindow(QMainWindow):
         else:
            WiVpadinaValue=False 
     def ClearGrafik(self):
+        """ Очистить График  по кнопке 
+        """
         self.graphWidget.clear()
 
 
