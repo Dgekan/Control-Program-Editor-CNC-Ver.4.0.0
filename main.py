@@ -3,17 +3,13 @@
 # Control-Program-Editor-CNC-Ver.3.0.1
 import csv,sys,os
 from PyQt5.QtWidgets import QApplication,QMainWindow
-from PyQt5 import uic, QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 from numpy import math
-ListX=[]
-ListZ=[]
-List_Yei=[]
-List_Xei=[]
-List_Ypki=[]
-List_Xpki=[]
-
+from PyQt5.Qt import Qt
+WiZubValue=False
+WiVpadinaValue=False
 #Основное окно
 class MyWindow(QMainWindow):
     def __init__(self,parent=None):
@@ -41,8 +37,11 @@ class MyWindow(QMainWindow):
         #self.Change_Button.clicked.connect(self. WriteFileList)
         #self.WriteFile_CProg_Button.clicked.connect(self.СontrolProgPrint)
         #self.Generate_program_Button.clicked.connect(self.GenerateСontrolProg)
-        self.Build_evolvent_Button.clicked.connect(self.Evolvent) 
-
+       
+        self.Build_evolvent_Button.clicked.connect(self.ClearGrafik)
+        self.Build_evolvent_Button.clicked.connect(self.Evolvent)  
+        self.checkBoxZub.stateChanged.connect(self.WiZub)
+        self.checkBoxVpadina.stateChanged.connect(self.WiVpadina)
     def Evolvent(self):
         #Расчет эвольветы зуба 
         # Читаем данные из полей формы
@@ -130,8 +129,8 @@ class MyWindow(QMainWindow):
         # Создаем списки 
         List_dyi=[]
         List_Di=[]
-        global List_Yei
-        global List_Xei
+        List_Yei=[]
+        List_Xei=[]
         List_Minus_Xei=[]
         List_Xdai=[]
         List_Ydai=[]
@@ -139,8 +138,8 @@ class MyWindow(QMainWindow):
         List_Ai=[]
         List_Bi=[]
         List_fi=[]
-        global List_Ypki
-        global List_Xpki
+        List_Ypki=[]
+        List_Xpki=[]
         List_Minus_Xpki=[]
         # Заполняем нуливой (первый )индекс списка значениями
         List_dyi.append(dyi)
@@ -213,47 +212,26 @@ class MyWindow(QMainWindow):
         List_Xpki.append((List_Ai[99] * math.sin(fi)-List_Bi[99] * math.cos(List_fi[99])) * m)
         List_Minus_Xpki.append(-List_Xpki[99])
 
-        #склыдываем листы в одну кривую 
-        global ListX
-        ListX =  List_Xei + List_Xpki 
-        global ListZ
-        ListZ =  List_Yei + List_Ypki  
-        # Заполняем текстовое поле   результатами 
-        # сбрасываем переменные в 0 
-        #i=0
-        #self.textEdit_toch.clear()
-       # Создаем новые листы для текстового поля 
-        #List_Axis_Z=[]
-        #List_Axis_X=[]
-        #в цикле  заполняем листы
-        #for i in range(199,0,-1):    
-           
-            #List_Axis_Z.append(round(ListZ[i],3)) 
-        #i=0
-        #for i in range(0,199,1):    
-            
-            #List_Axis_X.append(round(ListX[i],3))
-        # В цикле заполняем текстовое поле    
-        #i=0
-        #for i in range(198,0,-1):
-            #Var_X=List_Axis_X[i]
-            #Var_Z=List_Axis_Z[i]     
-            #self.textEdit_toch.append(str(Var_X)+","+str(Var_Z))
-
+        self.TextEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki)
         #рисуем профиль зуба 
-        self.graphWidget.clear() 
+       
         #Отправляем листы на прорисовку в график 
-        self.plot(List_Yei, List_Xei, "Evalvent", 'b')
-        self.plot(List_Yei, List_Minus_Xei, "mEvalvent", 'b')
+        if WiVpadinaValue == True:
+           # self.graphWidget.clear() 
+            self.plot(List_Yei, List_Xei, "Evalvent", 'b')
+            self.plot(List_Yei, List_Minus_Xei, "mEvalvent", 'b')
 
-        self.plot(List_Ypki, List_Xpki, "Perehod", 'r')
-        self.plot(List_Ypki, List_Minus_Xpki, "mPerehod", 'r')
+            self.plot(List_Ypki, List_Xpki, "Perehod", 'b')
+            self.plot(List_Ypki, List_Minus_Xpki, "mPerehod", 'b')
 
-        self.plot(List_Ydai, List_Xdai, "Naryg", 'g')    
-        self.TextEvolvent()
+            self.plot(List_Ydai, List_Xdai, "Naryg", 'b')    
+        
+       
+
     def plot(self,x, y, plotname, color):
        #функция отрисовки графика 
        #переменная цвет линии
+      
         pen = pg.mkPen(color=color)
        #надпись наименование осей 
         self.graphWidget.setLabel('left', 'Ось Х', color='red', size=30)
@@ -264,23 +242,20 @@ class MyWindow(QMainWindow):
         self.graphWidget.plot(x, y, name=plotname, pen=pen, symbol='o', symbolSize=10, symbolBrush=(color))
     
     
-    def TextEvolvent(self):
-       
+    def TextEvolvent(self,AxisX,AxisZ):
+       # self.graphWidget.clear()
         List_Axis_X1=[]
         List_Axis_Z1=[]
-        List_Axis_X=List_Xei+List_Xpki
-        List_Axis_Z=List_Yei+List_Ypki
+        List_Axis_X=AxisX
+        List_Axis_Z=AxisZ
         i=0
         for i in range(len(List_Axis_X)):
             List_Axis_X1.append(List_Axis_X[i]-(List_Axis_X[199]+List_Axis_X[0]/2)) 
             #List_Axis_X1.append(-List_Axis_X[i])    
             List_Axis_Z1.append(List_Axis_Z[i])
-        print(List_Axis_X1[0],List_Axis_X[199])       
-        self.plot(List_Axis_Z1, List_Axis_X1, "Perehod", 'g')
-       
-
-       
-        
+        print(List_Axis_X1[0],List_Axis_X[199])  
+        if WiZubValue == True:     
+            self.plot(List_Axis_Z1, List_Axis_X1, "Perehod", 'g')
        
         Var_X_list=[]
         Var_Z_list=[]
@@ -293,12 +268,24 @@ class MyWindow(QMainWindow):
            Var_X_list.append(-List_Axis_X1[i]) 
            Var_Z_list.append(List_Axis_Z1[i])      
            self.textEdit_toch.append(str(round(-Var_X,3))+","+(str(round(Var_Z,3))))
-        self.plot(Var_Z_list, Var_X_list, "Perehod", 'g')
+        if WiZubValue == True:   
+           self.plot(Var_Z_list, Var_X_list, "Perehod", 'g')
        
 
-
-
-
+    def WiZub(self,val):
+        global WiZubValue
+        if val == Qt.Checked:
+           WiZubValue=True
+        else:
+           WiZubValue=False 
+    def WiVpadina(self,val):
+        global WiVpadinaValue
+        if val == Qt.Checked:
+           WiVpadinaValue=True        
+        else:
+           WiVpadinaValue=False 
+    def ClearGrafik(self):
+        self.graphWidget.clear()
 
 
 if __name__ == "__main__":
