@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -532,6 +532,42 @@
       </property>
       <property name="plainText">
        <string/>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_6">
+     <attribute name="title">
+      <string>Страница</string>
+     </attribute>
+     <widget class="QLabel" name="label_40">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>180</y>
+        <width>381</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Шаг зацепления зубчатого колеса это</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_2">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>210</y>
+        <width>381</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>https://morflot.su/shag-zaceplenija-zubchatogo-kolesa-jeto/</string>
       </property>
      </widget>
     </widget>
