@@ -8,6 +8,9 @@ from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 from numpy import math
 from PyQt5.Qt import Qt
+"""
+
+"""
 WiZubValue=False
 WiVpadinaValue=False
 #Основное окно
@@ -236,9 +239,10 @@ class MyWindow(QMainWindow):
     
 
     def plot(self,x, y, plotname, color):
-       #функция отрисовки графика 
-       #переменная цвет линии
-      
+        """функция отрисовки графика graphWidget\n
+       
+        """
+        # переменная цвет линии
         pen = pg.mkPen(color=color)
        #надпись наименование осей 
         self.graphWidget.setLabel('left', 'Ось Х', color='red', size=30)
@@ -282,7 +286,9 @@ class MyWindow(QMainWindow):
           TextEvolvent(self,AxisX,AxisZ) \n
           AxisX= [1,2,3] или [1,2,3] +[4,5,6] нужно вставить Лист  \n
           AxisZ= [1,2,3] или [1,2,3] +[4,5,6] нужно вставить Лист 
-        """       
+        """  
+        # В цикле заполняем текстовое поле   
+        self.textEdit_toch.clear()       
         for i in range(len(AxisX)):
             Var_X =AxisX[i]
             Var_Z =AxisZ[i]    
