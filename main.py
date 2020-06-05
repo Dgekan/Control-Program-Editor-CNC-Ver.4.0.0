@@ -13,6 +13,7 @@ from PyQt5.Qt import Qt
 """
 WiZubValue=False
 WiVpadinaValue=False
+WiEvolventValue=False
 n:int=0
 #Основное окно
 class MyWindow(QMainWindow):
@@ -46,6 +47,7 @@ class MyWindow(QMainWindow):
         self.Build_evolvent_Button.clicked.connect(self.Evolvent)  
         self.checkBoxZub.stateChanged.connect(self.WiZub)
         self.checkBoxVpadina.stateChanged.connect(self.WiVpadina)
+        self.checkBoxEvolvent.stateChanged.connect(self.WiEvolvent)
     def Evolvent(self):
         #Расчет эвольветы зуба 
         # Читаем данные из полей формы
@@ -295,24 +297,23 @@ class MyWindow(QMainWindow):
         global n
         ListX=[]       
         ListZ=[]
-        Var_Z2=""
-        #AxisX.reverse()
+        
         file=open("CSv.csv","w")
         self.textEdit_toch.clear()
-        print(da)
+       
         i=0       
         for i in range(len(AxisX)):
-            #Var_X =AxisX[i] AxisX1[n*2-1]
             Var_X = AxisX[i]-(AxisX[n*2-1]+AxisX[0]/2)
             ListX.append(-Var_X)
-            Var_Z = AxisZ[i]
-            Var_Z1 = AxisZ[i]- da
-            ListZ.append(Var_Z)  
-            self.textEdit_toch.append(str(round(-Var_X,3))+","+str(round(-Var_Z1,3)))
+            Var_Z = AxisZ[i]- da
+            ListZ.append(AxisZ[i])  
+            self.textEdit_toch.append(str(round(-Var_X,3))+","+str(round(-Var_Z,3)))
            
-            file.write(str(round(-Var_X,3))+","+(str(round(-Var_Z1,3)))+"\n")
-
-        self.plot(ListZ,ListX, "Prog", 'g')    
+            file.write(str(round(-Var_X,3))+","+(str(round(-Var_Z,3)))+"\n")
+        
+        if WiEvolventValue == True:    
+           self.plot(ListZ,ListX, "Prog", 'w')    
+        
         f = open("CSv.csv", 'r')
         mytext = f.read()
         f.close()
@@ -326,6 +327,8 @@ class MyWindow(QMainWindow):
                 for row in reader:    
                     items = [QtGui.QStandardItem(field) for field in row]
                     self.model.appendRow(items)
+                self.model.setHeaderData(0,Qt.Horizontal,"Ось Х")
+                self.model.setHeaderData(1,Qt.Horizontal,"Ось Z")     
                 self.tableView.resizeColumnsToContents()
             else:
                 reader = csv.reader(file, delimiter = ';')
@@ -333,6 +336,8 @@ class MyWindow(QMainWindow):
                 for row in reader:    
                     items = [QtGui.QStandardItem(field) for field in row]
                     self.model.appendRow(items)
+                self.model.setHeaderData(0,Qt.Horizontal,"Ось Х")
+                self.model.setHeaderData(1,Qt.Horizontal,"Ось Z")    
                 self.tableView.resizeColumnsToContents()    
         
           
@@ -357,6 +362,17 @@ class MyWindow(QMainWindow):
            WiVpadinaValue=True        
         else:
            WiVpadinaValue=False 
+
+    def WiEvolvent(self,val):
+        """
+        """
+        global WiEvolventValue
+        if val == Qt.Checked:
+            WiEvolventValue=True
+        else:
+            WiEvolventValue=False     
+        
+
     def ClearGrafik(self):
         """ Очистить График  по кнопке 
         """
