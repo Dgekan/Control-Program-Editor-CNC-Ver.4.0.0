@@ -218,8 +218,8 @@ class MyWindow(QMainWindow):
         List_Xpki.append((List_Ai[n-1] * math.sin(fi)-List_Bi[n-1] * math.cos(List_fi[n-1])) * m)
         List_Minus_Xpki.append(-List_Xpki[n-1])
 
-        self.GragEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki)
-        self.TextEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki)
+        self.GragEvolvent(List_Minus_Xei+List_Minus_Xpki,List_Yei+List_Ypki)
+        self.TextEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki,da/2)
         self.WiPfileZub(List_Yei,List_Xei,List_Minus_Xei,List_Ypki,List_Xpki,List_Minus_Xpki,
             List_Ydai,List_Xdai)
 
@@ -266,16 +266,15 @@ class MyWindow(QMainWindow):
         global n
         i=0
         for i in range(len(AxisX)):
-            List_Axis_X.append(AxisX[i]-(AxisX[ n*2-1]+AxisX[0]/2)) 
+            List_Axis_X.append(AxisX[i]-(AxisX[n*2-1]+(AxisX[0]/2)))
             List_Axis_Z.append(AxisZ[i])
-     
+           
         if WiVpadinaValue == True:     
             self.plot(List_Axis_Z, List_Axis_X, "Vpadina", 'g')
          
         Var_X_list=[]
         Var_Z_list=[]
-        # В цикле заполняем текстовое поле   
-        self.textEdit_toch.clear()  
+              
         i=0
         for i in range(len(AxisX)):
            Var_X_list.append(-List_Axis_X[i]) 
@@ -285,20 +284,60 @@ class MyWindow(QMainWindow):
            self.plot(Var_Z_list, Var_X_list, "Vpadina", 'g')
 
 
-    def TextEvolvent(self,AxisX,AxisZ):
+    def TextEvolvent(self,AxisX,AxisZ,da):
         """Комент к функции пичать начальных точек \n
           TextEvolvent(self,AxisX,AxisZ) \n
           AxisX= [1,2,3] или [1,2,3] +[4,5,6] нужно вставить Лист  \n
           AxisZ= [1,2,3] или [1,2,3] +[4,5,6] нужно вставить Лист 
         """  
-        # В цикле заполняем текстовое поле   
-        self.textEdit_toch.clear()       
+        # В цикле заполняем текстовое поле 
+        
+        global n
+        ListX=[]       
+        ListZ=[]
+        Var_Z2=""
+        #AxisX.reverse()
+        file=open("CSv.csv","w")
+        self.textEdit_toch.clear()
+        print(da)
+        i=0       
         for i in range(len(AxisX)):
-            Var_X =AxisX[i]
-            Var_Z =AxisZ[i]    
-            self.textEdit_toch.append(str(round(-Var_X,3))+","+(
-                str(round(Var_Z,3))))    
-       
+            #Var_X =AxisX[i] AxisX1[n*2-1]
+            Var_X = AxisX[i]-(AxisX[n*2-1]+AxisX[0]/2)
+            ListX.append(-Var_X)
+            Var_Z = AxisZ[i]
+            Var_Z1 = AxisZ[i]- da
+            ListZ.append(Var_Z)  
+            self.textEdit_toch.append(str(round(-Var_X,3))+","+str(round(-Var_Z1,3)))
+           
+            file.write(str(round(-Var_X,3))+","+(str(round(-Var_Z1,3)))+"\n")
+
+        self.plot(ListZ,ListX, "Prog", 'g')    
+        f = open("CSv.csv", 'r')
+        mytext = f.read()
+        f.close()
+        
+        file = open("CSv.csv", 'r')
+                   
+        with file:
+            if mytext.count(';') <= mytext.count(','):
+                reader = csv.reader(file, delimiter = ',')
+                self.model.clear()
+                for row in reader:    
+                    items = [QtGui.QStandardItem(field) for field in row]
+                    self.model.appendRow(items)
+                self.tableView.resizeColumnsToContents()
+            else:
+                reader = csv.reader(file, delimiter = ';')
+                self.model.clear()
+                for row in reader:    
+                    items = [QtGui.QStandardItem(field) for field in row]
+                    self.model.appendRow(items)
+                self.tableView.resizeColumnsToContents()    
+        
+          
+ 
+
 
     def WiZub(self,val):
         """
