@@ -19,12 +19,12 @@
      <rect>
       <x>210</x>
       <y>10</y>
-      <width>681</width>
+      <width>711</width>
       <height>711</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -507,47 +507,6 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_5">
-     <attribute name="title">
-      <string>Эвальвента</string>
-     </attribute>
-     <widget class="QLabel" name="label_18">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>-10</y>
-        <width>691</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Расчет координат точек профиля зуба цилиндрического зубчатого колеса в торцевом сечении</string>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="textEdit_toch">
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>30</y>
-        <width>321</width>
-        <height>611</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPlainTextEdit" name="plainTextEdit">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>321</width>
-        <height>611</height>
-       </rect>
-      </property>
-      <property name="plainText">
-       <string/>
-      </property>
-     </widget>
-    </widget>
     <widget class="QWidget" name="tab_6">
      <attribute name="title">
       <string>Страница</string>
@@ -555,8 +514,8 @@
      <widget class="QLabel" name="label_40">
       <property name="geometry">
        <rect>
-        <x>210</x>
-        <y>180</y>
+        <x>150</x>
+        <y>10</y>
         <width>381</width>
         <height>20</height>
        </rect>
@@ -573,8 +532,8 @@
      <widget class="QLineEdit" name="lineEdit_2">
       <property name="geometry">
        <rect>
-        <x>200</x>
-        <y>210</y>
+        <x>130</x>
+        <y>40</y>
         <width>381</width>
         <height>21</height>
        </rect>
@@ -583,31 +542,23 @@
        <string>https://morflot.su/shag-zaceplenija-zubchatogo-kolesa-jeto/</string>
       </property>
      </widget>
+     <widget class="QTextEdit" name="textEdit_toch">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>80</y>
+        <width>641</width>
+        <height>541</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
-   </widget>
-   <widget class="QPushButton" name="Generate_program_Button">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>730</y>
-      <width>181</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Генерировать УП</string>
-    </property>
    </widget>
    <widget class="QPushButton" name="pushButton_5">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>730</y>
+      <x>530</x>
+      <y>740</y>
       <width>171</width>
       <height>41</height>
      </rect>
@@ -689,8 +640,8 @@
    <widget class="QPushButton" name="Build_evolvent_Button">
     <property name="geometry">
      <rect>
-      <x>940</x>
-      <y>730</y>
+      <x>800</x>
+      <y>740</y>
       <width>181</width>
       <height>41</height>
      </rect>
@@ -707,9 +658,9 @@
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>890</x>
+      <x>910</x>
       <y>50</y>
-      <width>331</width>
+      <width>311</width>
       <height>351</height>
      </rect>
     </property>
@@ -901,9 +852,9 @@
    <widget class="QGroupBox" name="groupBox_5">
     <property name="geometry">
      <rect>
-      <x>890</x>
+      <x>910</x>
       <y>400</y>
-      <width>331</width>
+      <width>311</width>
       <height>301</height>
      </rect>
     </property>
@@ -961,9 +912,6 @@
      <item row="4" column="1">
       <widget class="QLineEdit" name="lineEdit_df"/>
      </item>
-     <item row="5" column="1">
-      <widget class="QLineEdit" name="lineEdit_St"/>
-     </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_28">
        <property name="text">
@@ -971,8 +919,8 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="1">
-      <widget class="QLineEdit" name="lineEdit_Pt"/>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="lineEdit_St"/>
      </item>
      <item row="6" column="0">
       <widget class="QLabel" name="label_27">
@@ -981,8 +929,8 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
-      <widget class="QLineEdit" name="lineEdit_hf"/>
+     <item row="6" column="1">
+      <widget class="QLineEdit" name="lineEdit_Pt"/>
      </item>
      <item row="7" column="0">
       <widget class="QLabel" name="label_24">
@@ -991,8 +939,8 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
-      <widget class="QLineEdit" name="lineEdit_ha"/>
+     <item row="7" column="1">
+      <widget class="QLineEdit" name="lineEdit_hf"/>
      </item>
      <item row="8" column="0">
       <widget class="QLabel" name="label_23">
@@ -1001,8 +949,8 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="1">
-      <widget class="QLineEdit" name="lineEdit_h"/>
+     <item row="8" column="1">
+      <widget class="QLineEdit" name="lineEdit_ha"/>
      </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_22">
@@ -1011,7 +959,23 @@
        </property>
       </widget>
      </item>
+     <item row="9" column="1">
+      <widget class="QLineEdit" name="lineEdit_h"/>
+     </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="GenerateProgramButon">
+    <property name="geometry">
+     <rect>
+      <x>302</x>
+      <y>740</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Создать УП</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

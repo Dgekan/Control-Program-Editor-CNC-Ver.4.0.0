@@ -8,6 +8,7 @@ from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 from numpy import math
 from PyQt5.Qt import Qt
+import datetime
 """
 
 """
@@ -15,6 +16,8 @@ WiZubValue=False
 WiVpadinaValue=False
 WiEvolventValue=False
 n:int=0
+ValkosZub=True
+ValNaklon=True
 #Основное окно
 class MyWindow(QMainWindow):
     def __init__(self,parent=None):
@@ -23,6 +26,10 @@ class MyWindow(QMainWindow):
         uic.loadUi("Window.ui",self)
         # Заголовок 
         self.setWindowTitle("Control Program Editor CNC. Pre-Alpha Ver.3.0.1 ")
+        #ициализируем переменную имя файла 
+        self.fileName = ""
+        #имя файла по умолчанию 
+        self.fname = "Liste"
         #Таблица
         item = QtGui.QStandardItem()
         self.model =  QtGui.QStandardItemModel(self)
@@ -33,15 +40,15 @@ class MyWindow(QMainWindow):
         self.tableView.setShowGrid(True)
         self.tableView.resizeColumnsToContents()
         # Кнопки 
-        #self.WriteCsv_Button.clicked.connect(self.WriteCsv)
-        #self.Add_Row_Button.clicked.connect(self.AddRow)
-        #self.Remove_Row_Button.clicked.connect(self.RemoveRow)
-        #self.NewFile_Button.clicked.connect(self.NewFile)
+        self.WriteCsv_Button.clicked.connect(self.WriteCsv)
+        self.Add_Row_Button.clicked.connect(self.AddRow)
+        self.Remove_Row_Button.clicked.connect(self.RemoveRow)
+        self.NewFile_Button.clicked.connect(self.NewFile)
         #self.Print_Button.clicked.connect(self.HandlePrint)
         #self.Wi_print_Button.clicked.connect(self.HandlePreview)
         #self.Change_Button.clicked.connect(self. WriteFileList)
         #self.WriteFile_CProg_Button.clicked.connect(self.СontrolProgPrint)
-        #self.Generate_program_Button.clicked.connect(self.GenerateСontrolProg)
+        self.GenerateProgramButon.clicked.connect(self.GenerateControlProg)
        
         self.Build_evolvent_Button.clicked.connect(self.ClearGrafik)
         self.Build_evolvent_Button.clicked.connect(self.Evolvent)  
@@ -377,6 +384,278 @@ class MyWindow(QMainWindow):
         """ Очистить График  по кнопке 
         """
         self.graphWidget.clear()
+
+    def NewFile(self):
+        fileName="NewFile.csv"
+        ff = open(fileName, 'r')
+        mytext = ff.read()
+        ff.close()
+        f = open(fileName, 'r')
+        self.lineEdit.setText("Открыли файл - " + fileName)
+        with f:
+            self.fname = os.path.splitext(str(fileName))[0].split("/")[-1]
+            self.setWindowTitle(self.fname)
+            if mytext.count(';') <= mytext.count(','):
+                reader = csv.reader(f, delimiter = ',')
+                self.model.clear()
+                for row in reader:    
+                    items = [QtGui.QStandardItem(field) for field in row]
+                    self.model.appendRow(items)
+                self.model.setHeaderData(0,Qt.Horizontal,"Ось Х")
+                self.model.setHeaderData(1,Qt.Horizontal,"Ось Z")    
+                self.tableView.resizeColumnsToContents()
+         
+    
+    def AddRow(self):
+        item = QtGui.QStandardItem("")
+        self.model.appendRow(item)
+         
+    
+    def RemoveRow(self):
+        model = self.model
+        indices = self.tableView.selectionModel().selectedRows() 
+        for index in sorted(indices):
+           model.removeRow(index.row()) 
+        
+
+    def WriteCsv(self,fileName):
+        """
+        """
+
+        for row in range(self.model.rowCount()):
+            for column in range(self.model.columnCount()):
+                myitem = self.model.item(row,column)
+                if myitem is None:
+                    item = QtGui.QStandardItem("")
+                    self.model.setItem(row, column, item)
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Сохранит файл", 
+                    (QtCore.QDir.homePath() + "/" + self.fname + ".csv"),"CSV Файлы (*.csv)")
+                
+        if fileName:
+            f = open(fileName, 'w')
+            with f:
+                writer = csv.writer(f, delimiter = ',')
+                for rowNumber in range(self.model.rowCount()):
+                    fields = [self.model.data(self.model.index(rowNumber, columnNumber),
+                                        QtCore.Qt.DisplayRole)
+                    for columnNumber in range(self.model.columnCount())]
+                    writer.writerow(fields)
+                self.fname = os.path.splitext(str(fileName))[0].split("/")[-1]
+                self.setWindowTitle(self.fname)
+    
+        SAxis = self.lineEditAxisS.text()
+        XAxis = self.lineEditAxisX.text()
+        YAxis = self.lineEditAxisY.text()
+        VisotaYAxis = self.lineEditVisota.text()
+        ExitFreza = self.lineEditVilet.text()
+        DFreza = self.lineEditDFreza.text()
+        KolZub = self.lineEditKolZub.text()
+        ORA = self.lineEditOra.text()
+        Ugol = self.lineEditUgol.text()
+        saveText=[SAxis,XAxis,YAxis,VisotaYAxis,ExitFreza,DFreza,KolZub,ORA,Ugol]
+
+        fileTxt=open(fileName+".txt","w") 
+         
+        for i in saveText:
+           fileTxt.writelines(i+"\n")
+        fileTxt.close()
+    
+        
+
+    def GrafСontrolProg(self):
+       Xlist = []
+       Zlist = []
+       mXList = []  
+       self.graphWidget.clear()          
+      
+       for rowNumber in range(self.model.rowCount()):
+           
+           fii=[self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
+           fi=[self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
+        
+           for i in range(len(fii)):
+               x= fii[i]
+               Xlist.append(float(x))
+               mx=fii[i]
+               mXList.append(float("-"+mx))
+           for ii in range(len(fi)):
+               z= fi[ii] 
+               Zlist.append(float("-"+z))
+
+      # print(Xlist,mXList,Zlist)        
+      # self.plot(Xlist,Zlist) 
+       self.plot(Zlist, Xlist, "Sensor1", 'b')
+       self.plot(Zlist, mXList, "Sensor2", 'b')
+           
+
+    def GenerateControlProg(self):
+        n=0
+        no=0
+        E25 = self.lineEditAxisX.text()
+        E26 = self.lineEditAxisY.text()
+        VisotaYAxis = self.lineEditVisota.text()
+        DFreza = self.lineEditDFreza.text()
+        ExitFreza = self.lineEditVilet.text()
+        if DFreza and ExitFreza and VisotaYAxis:
+           E30 = (int(DFreza)/2)+(int(ExitFreza)*2)+int(VisotaYAxis)
+        else:
+           E30=""   
+        M3 = self.lineEditAxisS.text()
+        UAO = self.lineEditOra.text()
+        RPT = self.lineEditKolZub.text()
+        Coment = self.lineEditComent.text()
+        Obrab = self.comboBoxObrabotka.itemText(self.comboBoxObrabotka.currentIndex())
+        Detal = self.comboBoxChert.itemText(self.comboBoxChert.currentIndex())
+        Avtor = self.comboBoxFIO.itemText(self.comboBoxFIO.currentIndex()) 
+        Ulol =  self.lineEditUgol.text()
+        data=datetime.datetime.now()
+        datatext=data.strftime("%d-%m-%Y %H:%M") 
+
+        listText=[";ЛАИТ",";Program created",";automatically",";Программу заполнил "+Avtor,";Дата создания "+datatext,";Деталь "+ Detal,
+            ";Обработка "+Obrab,";Диаметр фрезы D "+str(DFreza),";Скорость подачи по Х и Z","E25="+str(E25),
+                  ";Скорость подачи по Y","E26="+str(E26),";Высота по Y","E30="+str(E30),";Скорость оборотов шпинделя",
+                  "M3 S"+str(M3),";Начальная точка","(UOA,"+str(UAO)+")"]
+        self.textEdit.clear()
+        
+        if E25 and E26 and VisotaYAxis and DFreza and ExitFreza and E30 and UAO and RPT:
+
+            global ValkosZub
+            if ValkosZub:
+                #print("Опять ок")
+                global ValNaklon     
+                if ValNaklon:
+                    #print("Левый да")
+                    
+                    self.textEdit.append(";Косой левый Зуб !!!!")
+                    self.textEdit.append(";Косой левый Зуб !!!!")
+                    self.textEdit.append(";Косой левый Зуб !!!!")
+                    
+                    for iii in range(len(listText)):
+                        y=listText[iii] 
+            
+                        self.textEdit.append(y)
+                   
+                    for rowNumber in range(self.model.rowCount()):
+                        n=n+1
+                        self.textEdit.append(";Проход № "+str(n))
+                        fii=[self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
+                        fi=[self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
+        
+                        for i in range(len(fii)):
+                            x= fii[i]
+                        for ii in range(len(fi)):
+                            z= fi[ii] 
+                        no=no+1
+                        self.textEdit.append("N"+str(no)+" X"+x+"  Z-"+z+" FE25")
+                        no=no+1
+                        self.textEdit.append("N"+str(no)+" YE30 FE26")
+                        no=no+1
+                        self.textEdit.append("N"+str(no)+" X-"+x)
+                        no=no+1
+                        self.textEdit.append("N"+str(no)+" Y0 FE26")
+                        self.textEdit.append(" Угол "+Ulol)
+
+                    self.textEdit.append("M5")
+            
+                
+                else:
+                #    print("Левый нет")
+             
+                    self.textEdit.append(";Косой правый Зуб !!!!")
+                    self.textEdit.append(";Косой правый Зуб !!!!")
+                    
+                    for iii in range(len(listText)):
+                        y=listText[iii] 
+            
+                        self.textEdit.append(y)
+                   
+                    for rowNumber in range(self.model.rowCount()):
+                        n=n+1
+                        self.textEdit.append(";Проход № "+str(n))
+                        fii=[self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
+                        fi=[self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
+        
+                        for i in range(len(fii)):
+                            x= fii[i]
+                        for ii in range(len(fi)):
+                            z= fi[ii] 
+                        no=no+1
+                        self.textEdit.append("N"+str(no)+" X"+x+"  Z-"+z+" FE25")
+                        no=no+1
+                        self.textEdit.append("N"+str(no)+" YE30 FE26")
+                        no=no+1
+                        self.textEdit.append("N"+str(no)+" X-"+x)
+                        no=no+1
+                        self.textEdit.append("N"+str(no)+" Y0 FE26")
+                        self.textEdit.append(" Другой Угол "+Ulol)
+
+                    self.textEdit.append("M5")
+
+            else:
+                #print("Опять не ок ")   
+             
+                self.textEdit.append(";Прямой Зуб !!!!")
+                
+                
+                for iii in range(len(listText)):
+                    y=listText[iii] 
+            
+                    self.textEdit.append(y)
+                   
+                for rowNumber in range(self.model.rowCount()):
+                    n=n+1
+                    self.textEdit.append(";Проход № "+str(n))
+                    fii=[self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
+                    fi=[self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
+        
+                    for i in range(len(fii)):
+                        x= fii[i]
+                    for ii in range(len(fi)):
+                        z= fi[ii] 
+                    no=no+1
+                    self.textEdit.append("N"+str(no)+" X"+x+"  Z-"+z+" FE25")
+                    no=no+1
+                    self.textEdit.append("N"+str(no)+" YE30 FE26")
+                    no=no+1
+                    self.textEdit.append("N"+str(no)+" X-"+x)
+                    no=no+1
+                    self.textEdit.append("N"+str(no)+" Y0 FE26")
+
+                self.textEdit.append("M5")    
+        else:        
+            self.textEdit.append(";Дата создания "+datatext)
+            self.textEdit.append("Нужно заполнить все поля !!!!")
+            self.textEdit.append("Нужно заполнить все поля !!!!")
+            self.textEdit.append("Кроме комментария")
+
+
+
+    def Kos(self,kosZub):
+        global ValkosZub
+        if kosZub == Qt.Checked:
+           ValkosZub=True
+        else:
+           ValkosZub=False
+        self.texUgol()
+    def Naklon(self,LevNaklon):
+        global ValNaklon
+        if LevNaklon == Qt.Checked:
+           ValNaklon = True
+        else:
+           ValNaklon = False
+        self.texUgol()   
+
+    def texUgol(self):
+        global ValkosZub
+        if ValkosZub:
+           global ValNaklon
+           if ValNaklon:
+               self.labelKos.setText(" Левый Косой зуб ")
+           else:
+               self.labelKos.setText("Правый Косой зуб")
+        else:
+            self.labelKos.setText("Прямой зуб")    
+
 
 
 if __name__ == "__main__":
