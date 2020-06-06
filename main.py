@@ -49,12 +49,17 @@ class MyWindow(QMainWindow):
         #self.Change_Button.clicked.connect(self. WriteFileList)
         #self.WriteFile_CProg_Button.clicked.connect(self.СontrolProgPrint)
         self.GenerateProgramButon.clicked.connect(self.GenerateControlProg)
+        self.Button_Open_File.clicked.connect(self.Open_File)
        
         self.Build_evolvent_Button.clicked.connect(self.ClearGrafik)
         self.Build_evolvent_Button.clicked.connect(self.Evolvent)  
+        #выбираем чекбоксы
+        self.checkBoxKoc.stateChanged.connect(self.Kos)
+        self.checkBoxKosLev.stateChanged.connect(self.Naklon)
         self.checkBoxZub.stateChanged.connect(self.WiZub)
         self.checkBoxVpadina.stateChanged.connect(self.WiVpadina)
         self.checkBoxEvolvent.stateChanged.connect(self.WiEvolvent)
+
     def Evolvent(self):
         #Расчет эвольветы зуба 
         # Читаем данные из полей формы
@@ -460,7 +465,39 @@ class MyWindow(QMainWindow):
            fileTxt.writelines(i+"\n")
         fileTxt.close()
     
-        
+    def Open_File(self,fileName):
+        #Читаем имя файла из вджита
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть CSV файл",
+               (QtCore.QDir.homePath()), "CSV (*.csv *.tsv)")
+    # проверяем наличие имя файла 
+        if fileName:
+       
+            f = open(fileName, 'r')
+            mytext = f.read()
+            f.close()
+
+            file = open(fileName, 'r')
+            self.lineEdit.setText("Открыли файл - " + fileName)
+           
+            with file:
+                self.fname = os.path.splitext(str(fileName))[0].split("/")[-1]
+                self.setWindowTitle(self.fname)
+                if mytext.count(';') <= mytext.count(','):
+                    reader = csv.reader(file, delimiter = ',')
+                    self.model.clear()
+                    for row in reader:    
+                        items = [QtGui.QStandardItem(field) for field in row]
+                        self.model.appendRow(items)
+                    self.tableView.resizeColumnsToContents()
+                else:
+                    reader = csv.reader(file, delimiter = ';')
+                    self.model.clear()
+                    for row in reader:    
+                        items = [QtGui.QStandardItem(field) for field in row]
+                        self.model.appendRow(items)
+                    self.tableView.resizeColumnsToContents()
+            #self.loadTxt(fileName)
+            
 
     def GrafСontrolProg(self):
        Xlist = []
