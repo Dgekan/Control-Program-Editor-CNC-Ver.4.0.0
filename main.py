@@ -497,7 +497,72 @@ class MyWindow(QMainWindow):
                         self.model.appendRow(items)
                     self.tableView.resizeColumnsToContents()
             #self.loadTxt(fileName)
-            
+    
+    
+    def openFileSpisok(self):
+        f = open('question.md', 'r',encoding="utf-8")
+        with f:
+            dat = f.read()
+            self.textEditObrabotka.setText(dat)
+        f.close()
+
+        lines=[]  
+        with open('question.md',encoding="utf-8") as file:
+            lines = file.read().split()
+        self.comboBoxObrabotka.clear() 
+        self.comboBoxObrabotka.addItems(lines)
+        file.close()
+
+        f1 = open('questi.md', 'r',encoding="utf-8")
+        with f1:
+            dat1 = f1.read()
+            self.textEditCherteg.setText(dat1)
+        f1.close()
+
+        lines1=[]  
+        with open('questi.md',encoding="utf-8") as file1:
+            lines1 = file1.read().split()
+        self.comboBoxChert.clear() 
+        self.comboBoxChert.addItems(lines1)
+        file1.close()
+        
+        f2 = open('ques.md', 'r',encoding="utf-8")
+        with f2:
+            dat2 = f2.read()
+            self.textEditFIO.setText(dat2)
+        f2.close()
+
+        lines2=[]  
+        with open('ques.md',encoding="utf-8") as file2:
+            lines2 = file2.read().split()
+        self.comboBoxFIO.clear() 
+        self.comboBoxFIO.addItems(lines2)
+        file2.close()
+
+
+    def writeFileSpisok(self):
+        obrabotka=self.textEditObrabotka.toPlainText()
+        f = open('question.md','w',encoding="utf-8")
+        f.write(obrabotka)
+        f.close()
+       
+
+        cherteg=self.textEditCherteg.toPlainText()
+        f1 = open('questi.md','w',encoding="utf-8")
+        f1.write(cherteg)
+        f1.close()
+
+        FIO=self.textEditFIO.toPlainText()
+        f2 = open('ques.md','w',encoding="utf-8")
+        f2.write(FIO)
+        f2.close()
+     
+        
+        self.openFileSpisok()        
+
+
+
+
 
     def GrafСontrolProg(self):
        Xlist = []
