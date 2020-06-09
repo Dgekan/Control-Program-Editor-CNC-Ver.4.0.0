@@ -3,7 +3,7 @@
 # Control-Program-Editor-CNC-Ver.3.0.1
 import csv,sys,os
 from PyQt5.QtWidgets import QApplication,QMainWindow
-from PyQt5 import QtCore, QtGui, QtWidgets, uic
+from PyQt5 import QtCore, QtGui, QtWidgets, uic, QtPrintSupport
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 from numpy import math
@@ -16,8 +16,8 @@ WiZubValue=False
 WiVpadinaValue=False
 WiEvolventValue=False
 n:int=0
-ValkosZub=True
-ValNaklon=True
+ValkosZub=False
+ValNaklon=False
 #Основное окно
 class MyWindow(QMainWindow):
     def __init__(self,parent=None):
@@ -44,10 +44,10 @@ class MyWindow(QMainWindow):
         self.Add_Row_Button.clicked.connect(self.AddRow)
         self.Remove_Row_Button.clicked.connect(self.RemoveRow)
         self.NewFile_Button.clicked.connect(self.NewFile)
-        #self.Print_Button.clicked.connect(self.HandlePrint)
-        #self.Wi_print_Button.clicked.connect(self.HandlePreview)
-        #self.Change_Button.clicked.connect(self. WriteFileList)
-        #self.WriteFile_CProg_Button.clicked.connect(self.СontrolProgPrint)
+        self.Print_Button.clicked.connect(self.handlePrint)
+        self.Wi_print_Button.clicked.connect(self.handlePreview)
+        self.Change_Button.clicked.connect(self.WriteCatalog)
+        self.WriteFile_CProg_Button.clicked.connect(self.WriteControlProg)
         self.GenerateProgramButon.clicked.connect(self.GenerateControlProg)
         self.Button_Open_File.clicked.connect(self.Open_File)
        
@@ -56,9 +56,13 @@ class MyWindow(QMainWindow):
         #выбираем чекбоксы
         self.checkBoxKoc.stateChanged.connect(self.Kos)
         self.checkBoxKosLev.stateChanged.connect(self.Naklon)
+
         self.checkBoxZub.stateChanged.connect(self.WiZub)
         self.checkBoxVpadina.stateChanged.connect(self.WiVpadina)
         self.checkBoxEvolvent.stateChanged.connect(self.WiEvolvent)
+         
+        self.ReadCatalog()
+
 
     def Evolvent(self):
         #Расчет эвольветы зуба 
@@ -281,6 +285,7 @@ class MyWindow(QMainWindow):
         i=0
         for i in range(len(AxisX)):
             List_Axis_X.append(AxisX[i]-(AxisX[n*2-1]+(AxisX[0]/2)))
+            #List_Axis_X.append(AxisX[i]-(AxisX[n*2-1]+(AxisX[0])))
             List_Axis_Z.append(AxisZ[i])
            
         if WiVpadinaValue == True:     
@@ -351,13 +356,9 @@ class MyWindow(QMainWindow):
                 self.model.setHeaderData(0,Qt.Horizontal,"Ось Х")
                 self.model.setHeaderData(1,Qt.Horizontal,"Ось Z")    
                 self.tableView.resizeColumnsToContents()    
-        
-          
- 
-
-
+   
     def WiZub(self,val):
-        """
+        """показываем профиль зуба на графике
         """
         global WiZubValue
         if val == Qt.Checked:
@@ -367,7 +368,7 @@ class MyWindow(QMainWindow):
     #    return True
                
     def WiVpadina(self,val):
-        """
+        """показываем профиль впадины на графике
         """
         global WiVpadinaValue
         if val == Qt.Checked:
@@ -376,7 +377,7 @@ class MyWindow(QMainWindow):
            WiVpadinaValue=False 
 
     def WiEvolvent(self,val):
-        """
+        """показываем профель эвольвенты на графике
         """
         global WiEvolventValue
         if val == Qt.Checked:
@@ -391,6 +392,8 @@ class MyWindow(QMainWindow):
         self.graphWidget.clear()
 
     def NewFile(self):
+        """Заполняем таблицу из файла заготовки
+        """
         fileName="NewFile.csv"
         ff = open(fileName, 'r')
         mytext = ff.read()
@@ -412,11 +415,15 @@ class MyWindow(QMainWindow):
          
     
     def AddRow(self):
+        """Добавляем новую строку
+        """
         item = QtGui.QStandardItem("")
         self.model.appendRow(item)
          
     
     def RemoveRow(self):
+        """Удаляем выделеную строку
+        """
         model = self.model
         indices = self.tableView.selectionModel().selectedRows() 
         for index in sorted(indices):
@@ -496,73 +503,72 @@ class MyWindow(QMainWindow):
                         items = [QtGui.QStandardItem(field) for field in row]
                         self.model.appendRow(items)
                     self.tableView.resizeColumnsToContents()
-            #self.loadTxt(fileName)
+        try:            
+            with open(fileName+".txt","r",) as fileTxe:
+                listFile =   fileTxe.readlines()
+                            
+                self.lineEditAxisS.setText(str(listFile[0].rstrip('\n')))
+                self.lineEditAxisX.setText(str(listFile[1].rstrip('\n')))
+                self.lineEditAxisY.setText(str(listFile[2].rstrip('\n')))
+                self.lineEditVisota.setText(str(listFile[3].rstrip('\n')))
+                self.lineEditVilet.setText(str(listFile[4].rstrip('\n')))
+                self.lineEditDFreza.setText(str(listFile[5].rstrip('\n')))
+                self.lineEditKolZub.setText(str(listFile[6].rstrip('\n')))
+                self.lineEditOra.setText(str(listFile[7].rstrip('\n')))
+                self.lineEditUgol.setText(str(listFile[8].rstrip('\n')))
+        except IOError:    
+
+            reply = QMessageBox.question(self, 'Внимание', "Нет файла конфигурации \n Нужно создать новый \n СОЗДАДИМ ? ", QMessageBox.Ok)
+            if reply == QMessageBox.Ok:
+                self.writeCsv(fileName)
     
     
-    def openFileSpisok(self):
-        f = open('question.md', 'r',encoding="utf-8")
-        with f:
-            dat = f.read()
-            self.textEditObrabotka.setText(dat)
-        f.close()
-
-        lines=[]  
-        with open('question.md',encoding="utf-8") as file:
-            lines = file.read().split()
-        self.comboBoxObrabotka.clear() 
-        self.comboBoxObrabotka.addItems(lines)
-        file.close()
-
-        f1 = open('questi.md', 'r',encoding="utf-8")
-        with f1:
-            dat1 = f1.read()
-            self.textEditCherteg.setText(dat1)
-        f1.close()
-
-        lines1=[]  
-        with open('questi.md',encoding="utf-8") as file1:
-            lines1 = file1.read().split()
-        self.comboBoxChert.clear() 
-        self.comboBoxChert.addItems(lines1)
-        file1.close()
+    def ReadCatalog(self):
+        with open("Catalog.csv") as f:
+            line=csv.reader(f)
+            listUser=next(line)
+            listProcessName=next(line)
+            listDrawingName=next(line)
+        self.FillList(list(listUser),list(listProcessName),list(listDrawingName)) 
+    
+    def FillList(self,listUser,listProcessName,listDrawingName):
+        self.comboBoxProcess.clear()
+        self.comboBoxProcess.addItems(listProcessName)
+        self.comboBoxDrawing.clear()
+        self.comboBoxDrawing.addItems(listDrawingName)
+        self.comboBoxUser.clear()
+        self.comboBoxUser.addItems(listUser)
         
-        f2 = open('ques.md', 'r',encoding="utf-8")
-        with f2:
-            dat2 = f2.read()
-            self.textEditFIO.setText(dat2)
-        f2.close()
+        self.textEditUser.clear()       
+        for i in range(len(listUser)):
+            x = listUser[i]
+            self.textEditUser.append(x)
+        self.textEditProcess.clear()
+        for i in range(len(listProcessName)):
+            x = listProcessName[i]
+            self.textEditProcess.append(x)
+        self.textEditDrawing.clear()
+        for i in range(len(listDrawingName)):
+            x = listDrawingName[i]
+            self.textEditDrawing.append(x)
 
-        lines2=[]  
-        with open('ques.md',encoding="utf-8") as file2:
-            lines2 = file2.read().split()
-        self.comboBoxFIO.clear() 
-        self.comboBoxFIO.addItems(lines2)
-        file2.close()
+    def WriteCatalog(self):        
 
-
-    def writeFileSpisok(self):
-        obrabotka=self.textEditObrabotka.toPlainText()
-        f = open('question.md','w',encoding="utf-8")
-        f.write(obrabotka)
-        f.close()
-       
-
-        cherteg=self.textEditCherteg.toPlainText()
-        f1 = open('questi.md','w',encoding="utf-8")
-        f1.write(cherteg)
-        f1.close()
-
-        FIO=self.textEditFIO.toPlainText()
-        f2 = open('ques.md','w',encoding="utf-8")
-        f2.write(FIO)
-        f2.close()
-     
+        User = self.textEditUser.toPlainText()
+        listUser = User.split('\n')
         
-        self.openFileSpisok()        
+        ProcessName=self.textEditProcess.toPlainText()
+        listProcessName = ProcessName.split('\n')
 
+        DrawingName = self.textEditDrawing.toPlainText()
+        listDrawingName = DrawingName.split('\n') 
 
+        with open("Catalog.csv",'w',newline='') as file:
+            csv.writer(file).writerow(listUser)
+            csv.writer(file).writerow(listProcessName)
+            csv.writer(file).writerow(listDrawingName)
 
-
+        self.ReadCatalog()     
 
     def GrafСontrolProg(self):
        Xlist = []
@@ -588,7 +594,38 @@ class MyWindow(QMainWindow):
       # self.plot(Xlist,Zlist) 
        self.plot(Zlist, Xlist, "Sensor1", 'b')
        self.plot(Zlist, mXList, "Sensor2", 'b')
-           
+
+    def Kos(self,kosZub):
+        """ Проверяем галочку  косой зуб
+        """
+        global ValkosZub
+        if kosZub == Qt.Checked:
+           ValkosZub=True
+        else:
+           ValkosZub=False
+        self.texUgol()
+    def Naklon(self,LevNaklon):
+        """Проверяем галочку наклона зуба
+        """
+        global ValNaklon
+        if LevNaklon == Qt.Checked:
+           ValNaklon = True
+        else:
+           ValNaklon = False
+        self.texUgol()   
+
+    def texUgol(self):
+        """Выводим на экран какой зуб 
+        """
+        global ValkosZub
+        if ValkosZub:
+           global ValNaklon
+           if ValNaklon:
+               self.labelKos.setText(" Левый Косой зуб ")
+           else:
+               self.labelKos.setText("Правый Косой зуб")
+        else:
+            self.labelKos.setText("Прямой зуб")       
 
     def GenerateControlProg(self):
         n=0
@@ -606,9 +643,9 @@ class MyWindow(QMainWindow):
         UAO = self.lineEditOra.text()
         RPT = self.lineEditKolZub.text()
         Coment = self.lineEditComent.text()
-        Obrab = self.comboBoxObrabotka.itemText(self.comboBoxObrabotka.currentIndex())
-        Detal = self.comboBoxChert.itemText(self.comboBoxChert.currentIndex())
-        Avtor = self.comboBoxFIO.itemText(self.comboBoxFIO.currentIndex()) 
+        Obrab = self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex())
+        Detal = self.comboBoxDrawing.itemText(self.comboBoxDrawing.currentIndex())
+        Avtor = self.comboBoxUser.itemText(self.comboBoxUser.currentIndex()) 
         Ulol =  self.lineEditUgol.text()
         data=datetime.datetime.now()
         datatext=data.strftime("%d-%m-%Y %H:%M") 
@@ -729,35 +766,40 @@ class MyWindow(QMainWindow):
             self.textEdit.append("Нужно заполнить все поля !!!!")
             self.textEdit.append("Нужно заполнить все поля !!!!")
             self.textEdit.append("Кроме комментария")
+     
 
+    def WriteControlProg(self):
+        """Записываем результат в фаил
 
+        """
+        fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self,"Сохранить фаил как",
+                    (QtCore.QDir.homePath() + "/" + self.fname +"")," Файлы cnc (*.)")
+        if fileName:
+            f=open(fileName, "w" ,encoding="cp866")
+            f.writelines(self.textEdit.toPlainText())
 
-    def Kos(self,kosZub):
-        global ValkosZub
-        if kosZub == Qt.Checked:
-           ValkosZub=True
-        else:
-           ValkosZub=False
-        self.texUgol()
-    def Naklon(self,LevNaklon):
-        global ValNaklon
-        if LevNaklon == Qt.Checked:
-           ValNaklon = True
-        else:
-           ValNaklon = False
-        self.texUgol()   
-
-    def texUgol(self):
-        global ValkosZub
-        if ValkosZub:
-           global ValNaklon
-           if ValNaklon:
-               self.labelKos.setText(" Левый Косой зуб ")
-           else:
-               self.labelKos.setText("Правый Косой зуб")
-        else:
-            self.labelKos.setText("Прямой зуб")    
-
+    def handlePrint(self):
+        """По кнопке печать
+        """
+        dialog = QtPrintSupport.QPrintDialog()
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+           self.handlePaintRequest(dialog.printer())
+ 
+    def handlePreview(self):
+        """ По кнопке предварительный просмотр
+        """
+        dialog = QtPrintSupport.QPrintPreviewDialog()
+        dialog.setFixedSize(1000,700)
+        dialog.paintRequested.connect(self.handlePaintRequest)
+        dialog.exec_()
+ 
+    def handlePaintRequest(self, printer):
+        """Функция вывода на печать
+        """
+        printer.setDocName(self.fname)
+        document = QtGui.QTextDocument(self.textEdit.toPlainText())
+        cursor = QtGui.QTextCursor(document)
+        document.print_(printer)
 
 
 if __name__ == "__main__":

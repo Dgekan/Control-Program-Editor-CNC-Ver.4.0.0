@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -98,7 +98,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBoxObrabotka"/>
+         <widget class="QComboBox" name="comboBoxProcess"/>
         </item>
         <item>
          <widget class="QLabel" name="label_7">
@@ -108,7 +108,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBoxChert"/>
+         <widget class="QComboBox" name="comboBoxDrawing"/>
         </item>
         <item>
          <widget class="QLabel" name="label_14">
@@ -118,7 +118,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="comboBoxFIO"/>
+         <widget class="QComboBox" name="comboBoxUser"/>
         </item>
         <item>
          <widget class="QLabel" name="label_12">
@@ -159,7 +159,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTextEdit" name="textEditObrabotka"/>
+         <widget class="QTextEdit" name="textEditProcess"/>
         </item>
         <item>
          <widget class="QLabel" name="label_16">
@@ -169,7 +169,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTextEdit" name="textEditCherteg"/>
+         <widget class="QTextEdit" name="textEditDrawing"/>
         </item>
         <item>
          <widget class="QLabel" name="label_17">
@@ -179,7 +179,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTextEdit" name="textEditFIO"/>
+         <widget class="QTextEdit" name="textEditUser"/>
         </item>
         <item>
          <widget class="QPushButton" name="Change_Button">
