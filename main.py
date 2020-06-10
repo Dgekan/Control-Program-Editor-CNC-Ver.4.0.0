@@ -60,9 +60,14 @@ class MyWindow(QMainWindow):
         self.checkBoxZub.stateChanged.connect(self.WiZub)
         self.checkBoxVpadina.stateChanged.connect(self.WiVpadina)
         self.checkBoxEvolvent.stateChanged.connect(self.WiEvolvent)
-         
+        
+        #self.radioButtonM66.pressed.connect(self.M6)
+       
         self.ReadCatalog()
-
+    #def M6(self):
+        
+       # print(" M6")
+       # print(" M66")
 
     def Evolvent(self):
         #Расчет эвольветы зуба 
@@ -236,6 +241,8 @@ class MyWindow(QMainWindow):
         List_Xpki.append((List_Ai[n-1] * math.sin(fi)-List_Bi[n-1] * math.cos(List_fi[n-1])) * m)
         List_Minus_Xpki.append(-List_Xpki[n-1])
 
+        self.lineEditKolZub.setText(str(round(z))) 
+        self.lineEditUgol.setText(str(b))           
         self.GragEvolvent(List_Minus_Xei+List_Minus_Xpki,List_Yei+List_Ypki)
         self.TextEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki,da/2)
         self.WiPfileZub(List_Yei,List_Xei,List_Minus_Xei,List_Ypki,List_Xpki,List_Minus_Xpki,
@@ -465,7 +472,7 @@ class MyWindow(QMainWindow):
         ORA = self.lineEditOra.text()
         Ugol = self.lineEditUgol.text()
         saveText=[SAxis,XAxis,YAxis,VisotaYAxis,ExitFreza,DFreza,KolZub,ORA,Ugol]
-
+        
         fileTxt=open(fileName+".txt","w") 
          
         for i in saveText:
@@ -762,7 +769,7 @@ class MyWindow(QMainWindow):
                     self.textEdit.append("N"+str(no)+" G42 Y0 FE26")
                 b=round(360/int(RPT),3)    
                 self.textEdit.append("G90 Z0 F1000")
-                self.textEdit.append("G91 G01 A-"+str(b)+"F150" )
+                self.textEdit.append("G91 G01 B-"+str(b)+"F150" )
                 self.textEdit.append("G90 G01 X0 Y0 W0 F 1500")
                 self.textEdit.append("#TIM2=TIM0-TIM1")
                 self.textEdit.append("#TOT0=TIM0-TIM1")

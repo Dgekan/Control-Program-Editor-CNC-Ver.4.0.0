@@ -137,13 +137,6 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="WriteFile_CProg_Button">
-          <property name="text">
-           <string>Записать УП в файл</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
@@ -215,9 +208,9 @@
       <property name="geometry">
        <rect>
         <x>230</x>
-        <y>380</y>
+        <y>350</y>
         <width>231</width>
-        <height>271</height>
+        <height>301</height>
        </rect>
       </property>
       <property name="title">
@@ -242,6 +235,13 @@
         <widget class="QPushButton" name="WriteCsv_Button">
          <property name="text">
           <string>Сохранить в файл</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="WriteFile_CProg_Button">
+         <property name="text">
+          <string>Записать УП в файл</string>
          </property>
         </widget>
        </item>
@@ -362,6 +362,20 @@
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButtonM6">
+         <property name="text">
+          <string>M6  Авто. смена инстр.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButtonM66">
+         <property name="text">
+          <string>M66 Ручная смена инстр.</string>
          </property>
         </widget>
        </item>
