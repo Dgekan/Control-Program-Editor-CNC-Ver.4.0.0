@@ -760,9 +760,9 @@ class MyWindow(QMainWindow):
                     for ii in range(len(fi)):
                         z= fi[ii] 
                     no=no+1
-                    self.textEdit.append("N"+str(no)+" G41 X"+x+"  Z-"+z+" FE25")
+                    self.textEdit.append("N"+str(no)+" G42 X"+x+"  Z-"+z+" FE25")
                     no=no+1
-                    self.textEdit.append("N"+str(no)+" G41 YE30 FE26")
+                    self.textEdit.append("N"+str(no)+" G42 YE30 FE26")
                     no=no+1
                     self.textEdit.append("N"+str(no)+" G42 X-"+x+" FE25")
                     no=no+1
