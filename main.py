@@ -659,9 +659,9 @@ class MyWindow(QMainWindow):
 
         listText=[";ЛАИТ",";Program created",";automatically",";Программу заполнил "+Avtor,";Дата создания "+datatext,";Деталь "+ Detal,
             ";Обработка "+Obrab,";Диаметр фрезы D "+str(DFreza),";Скорость подачи по Х и Z","E25="+str(E25),
-                  ";Скорость подачи по Y","E26="+str(E26),";Высота по Y","E30="+str(E30),"T1.1 M6",";Скорость оборотов шпинделя","G90G01 X0 Y0 W0 Z0 F1500",
+                  ";Скорость подачи по Y","E26="+str(E26),";Высота по Y","E30="+str(E30),"T1.3 M6",";Скорость оборотов шпинделя","G90G01 X0 Y0 W0 Z0 F1500",
                   "M3 S"+str(M3),";Начальная точка","(UAO,"+str(UAO)+")","(UOT,"+str(UAO)+",Y0,Z0,W0)","(UCG,2,X-100X100,Y20Y60,Z-150Z0,1,-5)",
-                  "(RPT,"+str(RPT)+")","E1="+str(RPT),"#TIM1=TIM0"]
+                  "(RPT,"+str(RPT)+")"]#,"E1="+str(RPT),"#TIM1=TIM0"]
         self.textEdit.clear()
         
         if E25 and E26 and VisotaYAxis and DFreza and ExitFreza and E30 and UAO and RPT:
@@ -760,22 +760,21 @@ class MyWindow(QMainWindow):
                     for ii in range(len(fi)):
                         z= fi[ii] 
                     no=no+1
-                    self.textEdit.append("N"+str(no)+" G42 X"+x+"  Z-"+z+" FE25")
+                    self.textEdit.append("N"+str(no)+" G41 X"+x+"  Z-"+z+" FE25")
                     no=no+1
-                    self.textEdit.append("N"+str(no)+" G42 YE30 FE26")
+                    self.textEdit.append("N"+str(no)+" G41 YE30 FE26")
                     no=no+1
-                    self.textEdit.append("N"+str(no)+" G42 X-"+x+" FE25")
+                    self.textEdit.append("N"+str(no)+" G41 X-"+x+" FE25")
                     no=no+1
-                    self.textEdit.append("N"+str(no)+" G42 Y0 FE26")
+                    self.textEdit.append("N"+str(no)+" G41 Y0 FE26")
                 b=round(360/int(RPT),3)    
                 self.textEdit.append("G90 Z0 F1000")
                 self.textEdit.append("G91 G01 B-"+str(b)+"F150" )
                 self.textEdit.append("G90 G01 X0 Y0 W0 F 1500")
-                self.textEdit.append("#TIM2=TIM0-TIM1")
-                self.textEdit.append("#TOT0=TIM0-TIM1")
-                self.textEdit.append("TOT1=TOT0*E1")
-                self.textEdit.append("TOT2=TOT1/3600")
-                self.textEdit.append("(DIS,E1,TOT2)")
+               # self.textEdit.append("# TOTO=TIMO-TIM1")
+               # self.textEdit.append("TOT1=TOTO*E1")
+               # self.textEdit.append("TOT2=TOT1/3600")
+               # self.textEdit.append("(DIS,E1,TOT2)")
                 self.textEdit.append("(ERP)")
                 self.textEdit.append("M5")    
         else:        
