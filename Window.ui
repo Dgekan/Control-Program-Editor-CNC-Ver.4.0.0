@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1284</width>
-    <height>837</height>
+    <width>3008</width>
+    <height>1648</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -559,10 +559,20 @@
      <widget class="QTextEdit" name="textEdit_toch">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>80</y>
-        <width>641</width>
-        <height>541</height>
+        <x>10</x>
+        <y>10</y>
+        <width>71</width>
+        <height>131</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QOpenGLWidget" name="openGLWidget">
+      <property name="geometry">
+       <rect>
+        <x>89</x>
+        <y>150</y>
+        <width>541</width>
+        <height>391</height>
        </rect>
       </property>
      </widget>
@@ -997,7 +1007,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1284</width>
+     <width>3008</width>
      <height>22</height>
     </rect>
    </property>
