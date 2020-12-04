@@ -634,6 +634,7 @@ class MyWindow(QMainWindow):
         else:
             self.labelKos.setText("Прямой зуб")       
 
+    
     def GenerateControlProg(self):
         n=0
         no=0
@@ -654,6 +655,17 @@ class MyWindow(QMainWindow):
         Detal = self.comboBoxDrawing.itemText(self.comboBoxDrawing.currentIndex())
         Avtor = self.comboBoxUser.itemText(self.comboBoxUser.currentIndex()) 
         Ulol =  self.lineEditUgol.text()
+        #расчет угла поворота стола при косом зубе 
+        angie_A:float = 90# угол А треугольника по высоте детали 
+        angie_B:float = float(Ulol) #угол B треугольника по высоте детали ( угол наклона зуба по чертежу)
+        angie_Y:float = 180 - (angie_A + angie_B) # трерий уго треугольника по высоте детали 
+        side_c:float = float(E30)# высота детали первая сторона треугольника 
+        side_a = side_c * math.sin(math.radians(angie_A)) / math.sin(math.radians(angie_Y))# вторая сторона треугольника 
+        side_b = side_c * math.sin(math.radians(angie_B)) / math.sin(math.radians(angie_Y))# третия сторона треугольника ( ось Х)
+        sid_a:float = float(self.lineEdit_da.text())/2 # радиус детали первая и вторая тророны треугольника по торцу
+        sid_c:float = sid_a
+        angi_B = float('{:.3f}'.format(math.degrees(math.acos((sid_a**2+sid_c**2-side_b**2)/(2*sid_a*sid_c)))))# результат угол поворота стола 
+
         data=datetime.datetime.now()
         datatext=data.strftime("%d-%m-%Y %H:%M") 
 
@@ -700,7 +712,7 @@ class MyWindow(QMainWindow):
                         self.textEdit.append("N"+str(no)+" X-"+x)
                         no=no+1
                         self.textEdit.append("N"+str(no)+" Y0 FE26")
-                        self.textEdit.append(" Угол "+Ulol)
+                        self.textEdit.append(" Угол " + str(angi_B))
 
                     self.textEdit.append("M5")
             
@@ -734,7 +746,7 @@ class MyWindow(QMainWindow):
                         self.textEdit.append("N"+str(no)+" X-"+x)
                         no=no+1
                         self.textEdit.append("N"+str(no)+" Y0 FE26")
-                        self.textEdit.append(" Другой Угол "+Ulol)
+                        self.textEdit.append(" Другой Угол " + str(angi_B))
 
                     self.textEdit.append("M5")
 
@@ -744,8 +756,8 @@ class MyWindow(QMainWindow):
                 self.textEdit.append(";Прямой Зуб !!!!")
                 
                 
-                for iii in range(len(listText)):
-                    y=listText[iii] 
+                for i in range(len(listText)):
+                    y=listText[i] 
             
                     self.textEdit.append(y)
                    
