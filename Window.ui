@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -782,6 +782,9 @@
        <property name="decimals">
         <number>3</number>
        </property>
+       <property name="minimum">
+        <double>-10.000000000000000</double>
+       </property>
        <property name="value">
         <double>0.000000000000000</double>
        </property>
@@ -941,13 +944,13 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>270</x>
       <y>740</y>
       <width>611</width>
-      <height>31</height>
+      <height>38</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
