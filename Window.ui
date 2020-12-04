@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1284</width>
-    <height>837</height>
+    <width>1307</width>
+    <height>852</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -559,33 +559,14 @@
      <widget class="QTextEdit" name="textEdit_toch">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>10</x>
         <y>80</y>
-        <width>641</width>
-        <height>541</height>
+        <width>131</width>
+        <height>601</height>
        </rect>
       </property>
      </widget>
     </widget>
-   </widget>
-   <widget class="QPushButton" name="pushButton_5">
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>740</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Calibri</family>
-      <pointsize>14</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Закрыть программу</string>
-    </property>
    </widget>
    <widget class="QTableView" name="tableView">
     <property name="geometry">
@@ -649,24 +630,6 @@
     </property>
     <property name="text">
      <string>Удалить строку</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Build_evolvent_Button">
-    <property name="geometry">
-     <rect>
-      <x>800</x>
-      <y>740</y>
-      <width>181</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>18</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Расчет</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox">
@@ -978,18 +941,49 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="GenerateProgramButon">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>302</x>
+      <x>270</x>
       <y>740</y>
-      <width>141</width>
-      <height>41</height>
+      <width>611</width>
+      <height>31</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Создать УП</string>
-    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="GenerateProgramButon">
+       <property name="text">
+        <string>Создать УП</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_5">
+       <property name="font">
+        <font>
+         <family>Calibri</family>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Закрыть программу</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="Build_evolvent_Button">
+       <property name="font">
+        <font>
+         <pointsize>18</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Расчет</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -997,7 +991,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1284</width>
+     <width>1307</width>
      <height>22</height>
     </rect>
    </property>

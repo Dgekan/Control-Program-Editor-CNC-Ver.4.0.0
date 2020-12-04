@@ -18,6 +18,80 @@ WiEvolventValue=False
 n:int=0
 ValkosZub=False
 ValNaklon=False
+class Freza():
+    '''Этот клас рисует круг вокруг точки эмитирует фрезу
+    '''
+    
+    def radiusX(self,Z0,z,x,n):
+        """ Z0=Центральная точка, z=Радиус, x=Радиус,  n=кол.точек,
+            Возврощает список в List=[] размер в n, 
+            Строит список координат  по оси 
+            от центральной точки на заданный радиус
+        """
+        Ugol=[]
+        for i in range(n):
+            i=+1
+            Ugol.append((i-1)*2+math.pi/(n-1))
+            listX.append(Z0+z*math.cos((i-1)*2*math.pi/(n-1)))
+        return ListX
+
+    def radiusZ(self,X0,z,x,n):
+        """ X0=Центральная точка, z=Радиус, x=Радиус,  n=кол.точек,
+            Возврощает список в List=[] размер в n, 
+            Строит список координат  по оси 
+            от центральной точки на заданный радиус
+        """
+        Ugol=[]
+        for i in range(n):
+            i=+1
+            Ugol.append((i-1)*2*math.pi/(n-1))
+            listZ.append(X0+x*math.sin((i-1)*2*math.pi/(n-1)))
+        return listZ 
+
+    def listRadiusX(self,listX):
+        """Функция подготавливает лист с координатами точек для 
+           дальнейшей прорисовки, создает список эвальвенты 
+           со вложенными списками гругов
+        """
+        for i in range(len(listX[i])):
+            twoListX.append(self.radiusX(listX[i]))
+        return twoListX 
+
+    def listRadiusZ(self,listZ):
+        """Функция подготавливает лист с координатами точек для 
+           дальнейшей прорисовки, создает список эвальвенты 
+           со вложенными списками гругов
+        """
+        for i in range(len(listZ[i])):
+            twoListZ.append(self.radiusZ(listZ[i]))
+        return twoListZ      
+                  
+    def drawCircle(self,twoListX,twoListZ):
+        """Функция рисует круги
+        """
+        for i in twoListX:
+            self.plot(twoListX,twoListZ,"krugi","g")
+
+    def parallelX(self,listX):
+        """Прокладывает параленьную линию относьтельно радиуса круга
+        """
+        listIX=[]
+        for i in range(len(listX)):
+            listIX.append(min(self.radiusX(listX[i])))
+        return listIX         
+        
+    def parallelZ(self,listZ):
+        """Прокладывает параленьную линию относьтельно радиуса круга
+        """
+        listIZ=[]
+        for i in range(len(listZ)):
+            listIZ.append(min(self.radiusZ(listZ[i])))
+
+        return listIZ
+        
+   # self.plot(self.parallelZ(listZ),self.parallelX(listX),"paralel","r")
+    
+        
 #Основное окно
 class MyWindow(QMainWindow):
     def __init__(self,parent=None):
@@ -35,7 +109,7 @@ class MyWindow(QMainWindow):
         self.model =  QtGui.QStandardItemModel(self)
         self.model.appendRow(item)
         self.model.setData(self.model.index(0, 0), "", 0)
-    #   self.model.dataChanged.connect(self.finishedEdit)
+        #   self.model.dataChanged.connect(self.finishedEdit)
         self.tableView.setModel(self.model)
         self.tableView.setShowGrid(True)
         self.tableView.resizeColumnsToContents()
@@ -64,12 +138,14 @@ class MyWindow(QMainWindow):
         #self.radioButtonM66.pressed.connect(self.M6)
        
         self.ReadCatalog()
-    #def M6(self):
+         #def M6(self):
         
-       # print(" M6")
-       # print(" M66")
+        # print(" M6")
+        # print(" M66")
 
     def Evolvent(self):
+        '''Расчет эвольвенты зуба
+        '''
         #Расчет эвольветы зуба 
         # Читаем данные из полей формы
         # z = Количество зубьев
@@ -133,7 +209,7 @@ class MyWindow(QMainWindow):
         hdy = (da-D)/(n-1)
         dyi = da
         fi = 2*math.cos(math.radians(b))/z*(x0+y0*math.tan(yi))
-    #Заполняем текстовые поля в форме
+        #Заполняем текстовые поля в форме
         # Делительный диаметр
         self.lineEdit_d.setText(str(d))
         # Высота зуба h=
@@ -372,7 +448,7 @@ class MyWindow(QMainWindow):
            WiZubValue= True
         else:
            WiZubValue=False 
-    #    return True
+        #    return True
                
     def WiVpadina(self,val):
         """показываем профиль впадины на графике
@@ -438,7 +514,7 @@ class MyWindow(QMainWindow):
         
 
     def WriteCsv(self,fileName):
-        """
+        """ сохраняем все в CSV Файлы и текстовый 
         """
 
         for row in range(self.model.rowCount()):
@@ -480,10 +556,12 @@ class MyWindow(QMainWindow):
         fileTxt.close()
     
     def Open_File(self,fileName):
+        """ Читаем CSV Файлы
+        """
         #Читаем имя файла из вджита
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть CSV файл",
                (QtCore.QDir.homePath()), "CSV (*.csv *.tsv)")
-    # проверяем наличие имя файла 
+        # проверяем наличие имя файла 
         if fileName:
        
             f = open(fileName, 'r')
@@ -531,6 +609,8 @@ class MyWindow(QMainWindow):
     
     
     def ReadCatalog(self):
+        """ Читаем списки из фаила
+        """
         with open("Catalog.csv") as f:
             line=csv.reader(f)
             listUser=next(line)
@@ -539,6 +619,8 @@ class MyWindow(QMainWindow):
         self.FillList(list(listUser),list(listProcessName),list(listDrawingName)) 
     
     def FillList(self,listUser,listProcessName,listDrawingName):
+        """Заполняем поля в форме из файла
+        """
         self.comboBoxProcess.clear()
         self.comboBoxProcess.addItems(listProcessName)
         self.comboBoxDrawing.clear()
@@ -559,7 +641,9 @@ class MyWindow(QMainWindow):
             x = listDrawingName[i]
             self.textEditDrawing.append(x)
 
-    def WriteCatalog(self):        
+    def WriteCatalog(self): 
+        """Записываем изминения в полях в фаил
+        """       
 
         User = self.textEditUser.toPlainText()
         listUser = User.split('\n')
@@ -578,29 +662,31 @@ class MyWindow(QMainWindow):
         self.ReadCatalog()     
 
     def GrafСontrolProg(self):
-       Xlist = []
-       Zlist = []
-       mXList = []  
-       self.graphWidget.clear()          
+        """Выводим результар ручного заполнения таблицы в график
+        """
+        Xlist=[]
+        Zlist=[]
+        mXList=[]  
+        self.graphWidget.clear()          
       
-       for rowNumber in range(self.model.rowCount()):
+        for rowNumber in range(self.model.rowCount()):
            
-           fii=[self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
-           fi=[self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
+            fii=[self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
+            fi=[self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
         
-           for i in range(len(fii)):
-               x= fii[i]
-               Xlist.append(float(x))
-               mx=fii[i]
-               mXList.append(float("-"+mx))
-           for ii in range(len(fi)):
-               z= fi[ii] 
-               Zlist.append(float("-"+z))
+            for i in range(len(fii)):
+                x= fii[i]
+                Xlist.append(float(x))
+                mx=fii[i]
+                mXList.append(float("-"+mx))
+            for ii in range(len(fi)):
+                z= fi[ii] 
+                Zlist.append(float("-"+z))
 
       # print(Xlist,mXList,Zlist)        
       # self.plot(Xlist,Zlist) 
-       self.plot(Zlist, Xlist, "Sensor1", 'b')
-       self.plot(Zlist, mXList, "Sensor2", 'b')
+        self.plot(Zlist, Xlist, "Sensor1", 'b')
+        self.plot(Zlist, mXList, "Sensor2", 'b')
 
     def Kos(self,kosZub):
         """ Проверяем галочку  косой зуб
@@ -636,6 +722,8 @@ class MyWindow(QMainWindow):
 
     
     def GenerateControlProg(self):
+        """Генерируем код управляющей программы
+        """
         n=0
         no=0
         E25 = self.lineEditAxisX.text()
