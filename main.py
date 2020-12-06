@@ -15,9 +15,11 @@ import datetime
 WiZubValue=False
 WiVpadinaValue=False
 WiEvolventValue=False
+Axis=""
 n:int=0
 ValkosZub=False
 ValNaklon=False
+
 class Freza():
     '''Этот клас рисует круг вокруг точки эмитирует фрезу
     '''
@@ -29,6 +31,7 @@ class Freza():
             от центральной точки на заданный радиус
         """
         Ugol=[]
+        listX=[]
         for i in range(n):
             i=+1
             Ugol.append((i-1)*2+math.pi/(n-1))
@@ -42,6 +45,7 @@ class Freza():
             от центральной точки на заданный радиус
         """
         Ugol=[]
+        listZ=[]
         for i in range(n):
             i=+1
             Ugol.append((i-1)*2*math.pi/(n-1))
@@ -53,6 +57,7 @@ class Freza():
            дальнейшей прорисовки, создает список эвальвенты 
            со вложенными списками гругов
         """
+        twoListX=[]
         for i in range(len(listX[i])):
             twoListX.append(self.radiusX(listX[i]))
         return twoListX 
@@ -62,6 +67,7 @@ class Freza():
            дальнейшей прорисовки, создает список эвальвенты 
            со вложенными списками гругов
         """
+        twoListZ=[]
         for i in range(len(listZ[i])):
             twoListZ.append(self.radiusZ(listZ[i]))
         return twoListZ      
@@ -134,7 +140,7 @@ class MyWindow(QMainWindow):
         self.checkBoxZub.stateChanged.connect(self.WiZub)
         self.checkBoxVpadina.stateChanged.connect(self.WiVpadina)
         self.checkBoxEvolvent.stateChanged.connect(self.WiEvolvent)
-        
+        self.checkBoxWZ.stateChanged.connect(self.AxisW)
         #self.radioButtonM66.pressed.connect(self.M6)
        
         self.ReadCatalog()
@@ -321,6 +327,7 @@ class MyWindow(QMainWindow):
         self.lineEditUgol.setText(str(b))           
         self.GragEvolvent(List_Minus_Xei+List_Minus_Xpki,List_Yei+List_Ypki)
         self.TextEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki,da/2)
+       
         self.WiPfileZub(List_Yei,List_Xei,List_Minus_Xei,List_Ypki,List_Xpki,List_Minus_Xpki,
             List_Ydai,List_Xdai)
 
@@ -340,8 +347,6 @@ class MyWindow(QMainWindow):
 
             self.plot(Ydai,Xdai, "Naryg", 'b')    
         
-    
-
     def plot(self,x, y, plotname, color):
         """функция отрисовки графика graphWidget\n
        
@@ -356,7 +361,6 @@ class MyWindow(QMainWindow):
        #рисуем сам график 
         self.graphWidget.plot(x, y, name=plotname, pen=pen, symbol='o', symbolSize=10, symbolBrush=(color))
     
-    
     def GragEvolvent(self,AxisX,AxisZ):
         """ Эта функция выводит на график  профель впадины\n
             AxisX= [1,2,3] или [1,2,3] +[4,5,6] нужно вставить Лист  \n
@@ -367,8 +371,8 @@ class MyWindow(QMainWindow):
         global n
         i=0
         for i in range(len(AxisX)):
-            List_Axis_X.append(AxisX[i]-(AxisX[n*2-1]+(AxisX[0]/2)))
-            #List_Axis_X.append(AxisX[i]-(AxisX[n*2-1]+(AxisX[0])))
+            #List_Axis_X.append(AxisX[i]-(AxisX[n*2-1]+(AxisX[0]/2)))
+            List_Axis_X.append(AxisX[i]-(AxisX[n*2-1]+(AxisX[0])))
             List_Axis_Z.append(AxisZ[i])
            
         if WiVpadinaValue == True:     
@@ -384,7 +388,6 @@ class MyWindow(QMainWindow):
     
         if WiVpadinaValue == True:   
            self.plot(Var_Z_list, Var_X_list, "Vpadina", 'g')
-
 
     def TextEvolvent(self,AxisX,AxisZ,da):
         """Комент к функции пичать начальных точек \n
@@ -403,7 +406,8 @@ class MyWindow(QMainWindow):
        
         i=0       
         for i in range(len(AxisX)):
-            Var_X = AxisX[i]-(AxisX[n*2-1]+AxisX[0]/2)
+           # Var_X = AxisX[i]-(AxisX[n*2-1]+AxisX[0]/2)
+            Var_X = AxisX[i]-(AxisX[n*2-1]+AxisX[0])
             ListX.append(-Var_X)
             Var_Z = AxisZ[i]- da
             ListZ.append(AxisZ[i])  
@@ -439,7 +443,16 @@ class MyWindow(QMainWindow):
                 self.model.setHeaderData(0,Qt.Horizontal,"Ось Х")
                 self.model.setHeaderData(1,Qt.Horizontal,"Ось Z")    
                 self.tableView.resizeColumnsToContents()    
-   
+    
+    def AxisW(self,val):
+        """
+        """
+        global Axis
+        if val ==Qt.Checked:
+            Axis="  W-"
+        else:
+            Axis="  Z-"
+
     def WiZub(self,val):
         """показываем профиль зуба на графике
         """
@@ -468,7 +481,6 @@ class MyWindow(QMainWindow):
         else:
             WiEvolventValue=False     
         
-
     def ClearGrafik(self):
         """ Очистить График  по кнопке 
         """
@@ -496,14 +508,12 @@ class MyWindow(QMainWindow):
                 self.model.setHeaderData(1,Qt.Horizontal,"Ось Z")    
                 self.tableView.resizeColumnsToContents()
          
-    
     def AddRow(self):
         """Добавляем новую строку
         """
         item = QtGui.QStandardItem("")
         self.model.appendRow(item)
          
-    
     def RemoveRow(self):
         """Удаляем выделеную строку
         """
@@ -512,7 +522,6 @@ class MyWindow(QMainWindow):
         for index in sorted(indices):
            model.removeRow(index.row()) 
         
-
     def WriteCsv(self,fileName):
         """ сохраняем все в CSV Файлы и текстовый 
         """
@@ -607,7 +616,6 @@ class MyWindow(QMainWindow):
             if reply == QMessageBox.Ok:
                 self.WriteCsv(fileName)
     
-    
     def ReadCatalog(self):
         """ Читаем списки из фаила
         """
@@ -697,6 +705,7 @@ class MyWindow(QMainWindow):
         else:
            ValkosZub=False
         self.texUgol()
+
     def Naklon(self,LevNaklon):
         """Проверяем галочку наклона зуба
         """
@@ -719,8 +728,7 @@ class MyWindow(QMainWindow):
                self.labelKos.setText("Правый Косой зуб")
         else:
             self.labelKos.setText("Прямой зуб")       
-
-    
+  
     def GenerateControlProg(self):
         """Генерируем код управляющей программы
         """
@@ -860,7 +868,7 @@ class MyWindow(QMainWindow):
                     for ii in range(len(fi)):
                         z= fi[ii] 
                     no=no+1
-                    self.textEdit.append("N"+str(no)+" G41 X"+x+"  Z-"+z+" FE25")
+                    self.textEdit.append("N"+str(no)+" G41 X"+x+Axis+z+" FE25")
                     no=no+1
                     self.textEdit.append("N"+str(no)+" G41 YE30 FE26")
                     no=no+1
@@ -883,7 +891,6 @@ class MyWindow(QMainWindow):
             self.textEdit.append("Нужно заполнить все поля !!!!")
             self.textEdit.append("Кроме комментария")
      
-
     def WriteControlProg(self):
         """Записываем результат в фаил
 

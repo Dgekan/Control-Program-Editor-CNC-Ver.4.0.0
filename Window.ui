@@ -36,7 +36,7 @@
         <x>460</x>
         <y>20</y>
         <width>241</width>
-        <height>621</height>
+        <height>651</height>
        </rect>
       </property>
      </widget>
@@ -188,7 +188,7 @@
       <property name="geometry">
        <rect>
         <x>260</x>
-        <y>330</y>
+        <y>320</y>
         <width>181</width>
         <height>31</height>
        </rect>
@@ -210,7 +210,7 @@
         <x>230</x>
         <y>350</y>
         <width>231</width>
-        <height>301</height>
+        <height>331</height>
        </rect>
       </property>
       <property name="title">
@@ -267,8 +267,14 @@
         <x>10</x>
         <y>10</y>
         <width>221</width>
-        <height>491</height>
+        <height>521</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <stylestrategy>PreferAntialias</stylestrategy>
+        <kerning>true</kerning>
+       </font>
       </property>
       <property name="title">
        <string>Основные параметры обработки</string>
@@ -363,6 +369,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="frame">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item>
@@ -379,13 +388,20 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QCheckBox" name="checkBoxWZ">
+         <property name="text">
+          <string>W или (Z ось по умолчанию)</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QGroupBox" name="groupBox_4">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>500</y>
+        <y>530</y>
         <width>221</width>
         <height>151</height>
        </rect>
@@ -835,7 +851,7 @@
       <x>920</x>
       <y>400</y>
       <width>351</width>
-      <height>301</height>
+      <height>311</height>
      </rect>
     </property>
     <property name="title">
@@ -956,6 +972,11 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="GenerateProgramButon">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Создать УП</string>
        </property>
