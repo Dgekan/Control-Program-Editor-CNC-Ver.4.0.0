@@ -184,9 +184,11 @@ class MyWindow(QMainWindow):
         # Высота ножки hf=
         hf = 1.25 * m
         #Диаметр вершин зубьев
-        da = d + (2 * m)*(ha+x+y)
+        #da = d + (2 * m)*(ha+x+y)
+        da = d + 2 * (ha + x-y)*m
         #Диаметр впадин (справочно)
-        df = d -(2 * hf)
+        #df = d -(2 * hf)
+        df = d -2* (ha + c - x) * m
         #Окружной шаг зубьев Pt=
         pt = math.pi * m
         #Окружная толщина зуба St=
