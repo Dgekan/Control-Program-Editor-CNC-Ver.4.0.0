@@ -148,6 +148,12 @@ class MyWindow(QMainWindow):
         
         # print(" M6")
         # print(" M66")
+    def Evolventa(self):
+        """
+        docstring
+        """
+        
+        pass
 
     def Evolvent(self):
         '''Расчет эвольвенты зуба
