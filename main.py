@@ -185,20 +185,28 @@ class MyWindow(QMainWindow):
         hf = 1.25 * m
         #Диаметр вершин зубьев
         #da = d + (2 * m)*(ha+x+y)
-        da = d + 2 * (ha + x-y)*m
+        da = d + 2 * (ha + x - y) * m
         #Диаметр впадин (справочно)
         #df = d -(2 * hf)
-        df = d -2* (ha + c - x) * m
-        #Окружной шаг зубьев Pt=
+        df = d -2 * (ha + c - x) * m
+        #Окружной шаг зубьев или Шаг зацепления по дуге делительной окружности: Pt или p
         pt = math.pi * m
-        #Окружная толщина зуба St=
-        St = 0.5 * pf
+        #Окружная толщина зуба или Толщина зуба по дуге делительной окружности: St или S
+        #Суммарный коэффициент смещений: XΣ
+        X = 0.60 + 0.12
+       # St = 0.5 * pf
+       # St = 0.5 * pt
+        St = 0.5 * pt + 2 * x * m * math.tan(math.radians(a))
+        #inv a 
+        inva=math.tan(math.radians(a))-math.radians(a)
+        #Угол зацепления invαw
+        invaw= (2 * X - math.tan(math.radians(a))) / (10+26) + inva
         #Угол профиля
-        at = math.ceil(math.degrees( math.atan( math.tan(math.radians(a))
+        at = math.ceil(math.degrees(math.atan(math.tan(math.radians(a))
             /math.cos( math.radians(b)))))
         # Диаметр основной окружности
-        db = d*math.cos(math.radians(at)) 
-        #Делительный диаметр
+        db = d * math.cos(math.radians(at)) 
+        #Диаметр начала выкружки зуба
         D  = 2 * m * ( ( z/( 2 * math.cos(math.radians(b)) )-(1-x)) ** 2 +
             ((1-x)/math.tan(math.radians(at)))**2)**0.5
         #Промежуточные данные
@@ -233,7 +241,7 @@ class MyWindow(QMainWindow):
         # Окружной шаг зубьев Pt=
         self.lineEdit_Pt.setText(str(math.ceil(pt)))
         # Окружная толщина зуба St=
-        self.lineEdit_St.setText(str(St))
+        self.lineEdit_St.setText(str(math.ceil(St)))
         # Угол профиля
         self.lineEdit_at.setText(str(at))
         # Диаметр основной окружности
