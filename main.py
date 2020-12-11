@@ -7,7 +7,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets, uic, QtPrintSupport
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 from numpy import math
-from PyQt5.Qt import QMessageBox, Qt
+from PyQt5.Qt import Qt
+from PyQt5.QtWidgets import QMessageBox
 import datetime
 """
 
@@ -15,7 +16,7 @@ import datetime
 WiZubValue=False
 WiVpadinaValue=False
 WiEvolventValue=False
-Axis=""
+Axis=" Z-"
 n:int=0
 ValkosZub=False
 ValNaklon=False
@@ -340,7 +341,8 @@ class MyWindow(QMainWindow):
         List_Minus_Xpki.append(-List_Xpki[n-1])
 
         self.lineEditKolZub.setText(str(round(z))) 
-        self.lineEditUgol.setText(str(b))           
+        self.lineEditUgol.setText(str(b)) 
+        self.lineEditDiametr.setText(str(da))        
         self.GragEvolvent(List_Minus_Xei+List_Minus_Xpki,List_Yei+List_Ypki)
         self.TextEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki,da/2)
        
@@ -740,14 +742,20 @@ class MyWindow(QMainWindow):
            global ValNaklon
            if ValNaklon:
                self.labelKos.setText(" Левый Косой зуб ")
+               
            else:
                self.labelKos.setText("Правый Косой зуб")
+              
         else:
-            self.labelKos.setText("Прямой зуб")       
+            self.labelKos.setText("Прямой зуб") 
+            
+        
+
   
     def GenerateControlProg(self):
         """Генерируем код управляющей программы
         """
+        
         n=0
         no=0
         E25 = self.lineEditAxisX.text()
@@ -767,16 +775,25 @@ class MyWindow(QMainWindow):
         Detal = self.comboBoxDrawing.itemText(self.comboBoxDrawing.currentIndex())
         Avtor = self.comboBoxUser.itemText(self.comboBoxUser.currentIndex()) 
         Ulol =  self.lineEditUgol.text()
+        Diametr = self.lineEditDiametr.text()
         #расчет угла поворота стола при косом зубе 
-        angie_A:float = 90# угол А треугольника по высоте детали 
-        angie_B:float = float(Ulol) #угол B треугольника по высоте детали ( угол наклона зуба по чертежу)
-        angie_Y:float = 180 - (angie_A + angie_B) # трерий уго треугольника по высоте детали 
-        side_c:float = float(E30)# высота детали первая сторона треугольника 
-        side_a = side_c * math.sin(math.radians(angie_A)) / math.sin(math.radians(angie_Y))# вторая сторона треугольника 
-        side_b = side_c * math.sin(math.radians(angie_B)) / math.sin(math.radians(angie_Y))# третия сторона треугольника ( ось Х)
-        sid_a:float = float(self.lineEdit_da.text())/2 # радиус детали первая и вторая тророны треугольника по торцу
-        sid_c:float = sid_a
-        angi_B = float('{:.3f}'.format(math.degrees(math.acos((sid_a**2+sid_c**2-side_b**2)/(2*sid_a*sid_c)))))# результат угол поворота стола 
+        if ValkosZub and Diametr:
+            angie_A:float = 90# угол А треугольника по высоте детали 
+            angie_B:float = float(Ulol) #угол B треугольника по высоте детали ( угол наклона зуба по чертежу)
+            angie_Y:float = 180 - (angie_A + angie_B) # трерий уго треугольника по высоте детали 
+            side_c:float = float(E30)# высота детали первая сторона треугольника 
+            side_a = side_c * math.sin(math.radians(angie_A)) / math.sin(math.radians(angie_Y))# вторая сторона треугольника 
+            side_b = side_c * math.sin(math.radians(angie_B)) / math.sin(math.radians(angie_Y))# третия сторона треугольника ( ось Х)
+            sid_a:float = float(Diametr)/2 # радиус детали первая и вторая тророны треугольника по торцу
+           # sid_a:float = float(self.lineEdit_da.text())/2 # радиус детали первая и вторая тророны треугольника по торцу
+            sid_c:float = sid_a
+            if sid_c < 10 :
+                sid_a:float = 10
+                sid_c:float = 10
+                angi_B = float('{:.3f}'.format(math.degrees(math.acos((sid_a**2+sid_c**2-side_b**2)/(2*sid_a*sid_c)))))
+                QMessageBox.about (self, "Ошибка " , "Диаметр шестерни задан меньше 20 мм. \n Введите риальный диаметр шестерни " )
+            else:
+                angi_B = float('{:.3f}'.format(math.degrees(math.acos((sid_a**2+sid_c**2-side_b**2)/(2*sid_a*sid_c)))))# результат угол поворота стола 
 
         data=datetime.datetime.now()
         datatext=data.strftime("%d-%m-%Y %H:%M") 
@@ -785,12 +802,12 @@ class MyWindow(QMainWindow):
             ";Обработка "+Obrab,";Диаметр фрезы D "+str(DFreza),";Скорость подачи по Х и Z","E25="+str(E25),
                   ";Скорость подачи по Y","E26="+str(E26),";Высота по Y","E30="+str(E30),"T1.3 M6",";Скорость оборотов шпинделя","G90G01 X0 Y0 W0 Z0 F1500",
                   "M3 S"+str(M3),";Начальная точка","(UAO,"+str(UAO)+")","(UOT,"+str(UAO)+",Y0,Z0,W0)","(UCG,2,X-100X100,Y20Y60,Z-150Z0,1,-5)",
-                  "(RPT,"+str(RPT)+")"]#,"E1="+str(RPT),"#TIM1=TIM0"]
+                  "(RPT,"+str(RPT)+")","E1="+str(RPT),"#TIM1=TIM0"]
         self.textEdit.clear()
         
         if E25 and E26 and VisotaYAxis and DFreza and ExitFreza and E30 and UAO and RPT:
 
-            global ValkosZub
+            #global ValkosZub
             if ValkosZub:
                 #print("Опять ок")
                 global ValNaklon     
@@ -811,22 +828,26 @@ class MyWindow(QMainWindow):
                         self.textEdit.append(";Проход № "+str(n))
                         fii=[self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
                         fi=[self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
-        
-                        for i in range(len(fii)):
-                            x= fii[i]
-                        for ii in range(len(fi)):
-                            z= fi[ii] 
-                        no=no+1
-                        self.textEdit.append("N"+str(no)+" X"+x+"  Z-"+z+" FE25")
-                        no=no+1
-                        self.textEdit.append("N"+str(no)+" YE30 FE26")
-                        no=no+1
-                        self.textEdit.append("N"+str(no)+" X-"+x)
-                        no=no+1
-                        self.textEdit.append("N"+str(no)+" Y0 FE26")
-                        self.textEdit.append(" Угол " + str(angi_B))
-
-                    self.textEdit.append("M5")
+                        if self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole) == None or fii == [''] or fi == ['']:
+                            self.textEdit.append("В таблице есть Пустое поле  ")
+                            self.labelKos.setText("Ошибка!!!!")
+                            QMessageBox.about (self, "Ошибка " , "В таблице есть пустые поля  " )
+                        else:
+                            for i in range(len(fii)):
+                                x= fii[i]
+                            for ii in range(len(fi)):
+                                z= fi[ii] 
+                            no=no+1
+                            self.textEdit.append("N"+str(no)+" X"+x+"  Z-"+z+" FE25")
+                            no=no+1
+                            self.textEdit.append("N"+str(no)+" YE30 FE26")
+                            no=no+1
+                            self.textEdit.append("N"+str(no)+" X-"+x)
+                            no=no+1
+                            self.textEdit.append("N"+str(no)+" Y0 FE26")
+                            self.textEdit.append(" Угол " + str(angi_B))
+                            self.texUgol()
+                        self.textEdit.append("M5")
             
                 
                 else:
@@ -845,23 +866,27 @@ class MyWindow(QMainWindow):
                         self.textEdit.append(";Проход № "+str(n))
                         fii=[self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
                         fi=[self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
-        
-                        for i in range(len(fii)):
-                            x= fii[i]
-                        for ii in range(len(fi)):
-                            z= fi[ii] 
-                        no=no+1
-                        self.textEdit.append("N"+str(no)+" X"+x+"  Z-"+z+" FE25")
-                        no=no+1
-                        self.textEdit.append("N"+str(no)+" YE30 FE26")
-                        no=no+1
-                        self.textEdit.append("N"+str(no)+" X-"+x)
-                        no=no+1
-                        self.textEdit.append("N"+str(no)+" Y0 FE26")
-                        self.textEdit.append(" Другой Угол " + str(angi_B))
-
-                    self.textEdit.append("M5")
-
+                        if self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole) == None or fii == [''] or fi == ['']:
+                            self.textEdit.append("В таблице есть Пустое поле  ")
+                            self.labelKos.setText("Ошибка!!!!")
+                            QMessageBox.about (self, "Ошибка " , "В таблице есть пустые поля  " )
+                        else:
+                            for i in range(len(fii)):
+                                x= fii[i]
+                            for ii in range(len(fi)):
+                                z= fi[ii] 
+                            no=no+1
+                            self.textEdit.append("N"+str(no)+" X"+x+"  Z-"+z+" FE25")
+                            no=no+1
+                            self.textEdit.append("N"+str(no)+" YE30 FE26")
+                            no=no+1
+                            self.textEdit.append("N"+str(no)+" X-"+x)
+                            no=no+1
+                            self.textEdit.append("N"+str(no)+" Y0 FE26")
+                            self.textEdit.append(" Другой Угол " + str(angi_B))
+                            self.texUgol()
+                        self.textEdit.append("M5")
+                      
             else:
                 #print("Опять не ок ")   
              
@@ -876,29 +901,41 @@ class MyWindow(QMainWindow):
                 for rowNumber in range(self.model.rowCount()):
                     n=n+1
                     self.textEdit.append(";Проход № "+str(n))
-                    fii=[self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
-                    fi=[self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
-        
-                    for i in range(len(fii)):
-                        x= fii[i]
-                    for ii in range(len(fi)):
-                        z= fi[ii] 
-                    no=no+1
-                    self.textEdit.append("N"+str(no)+" G41 X"+x+Axis+z+" FE25")
-                    no=no+1
-                    self.textEdit.append("N"+str(no)+" G41 YE30 FE26")
-                    no=no+1
-                    self.textEdit.append("N"+str(no)+" G41 X-"+x+" FE25")
-                    no=no+1
-                    self.textEdit.append("N"+str(no)+" G41 Y0 FE26")
+                    fii = [self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
+                    fi = [self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
+                    if self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole) == None or fii == [''] or fi == ['']:
+                        self.textEdit.append("В таблице есть Пустое поле  ")
+                        self.labelKos.setText("Ошибка!!!!")
+                        QMessageBox.about (self, "Ошибка " , "В таблице есть пустые поля  " )
+                    else:
+                        for i in range(len(fii)):
+                            x= fii[i]
+                        for ii in range(len(fi)):
+                            z= fi[ii] 
+                        no=no+1
+                        # self.textEdit.append("N"+str(no)+" G41 X"+x+Axis+z+" FE25")
+                        self.textEdit.append("N"+str(no)+" X"+x+Axis+z+" FE25")
+                        no=no+1
+                        #  self.textEdit.append("N"+str(no)+" G41 YE30 FE26")
+                        self.textEdit.append("N"+str(no)+" YE30 FE26")
+                        no=no+1
+                        #   self.textEdit.append("N"+str(no)+" G41 X-"+x+" FE25")
+                        self.textEdit.append("N"+str(no)+" X-"+x+" FE25")
+                        no=no+1
+                        #   self.textEdit.append("N"+str(no)+" G41 Y0 FE26")
+                        self.textEdit.append("N"+str(no)+" Y0 FE26")
+                        
+                        self.texUgol()
+
                 b=round(360/int(RPT),3)    
+                self.textEdit.append("")
                 self.textEdit.append("G90 Z0 F1000")
                 self.textEdit.append("G91 G01 B-"+str(b)+"F150" )
                 self.textEdit.append("G90 G01 X0 Y0 W0 F 1500")
-               # self.textEdit.append("# TOTO=TIMO-TIM1")
-               # self.textEdit.append("TOT1=TOTO*E1")
-               # self.textEdit.append("TOT2=TOT1/3600")
-               # self.textEdit.append("(DIS,E1,TOT2)")
+                self.textEdit.append("# TOTO=TIMO-TIM1")
+                self.textEdit.append("TOT1=TOTO*E1")
+                self.textEdit.append("TOT2=TOT1/3600")
+                self.textEdit.append("(DIS,E1,TOT2)")
                 self.textEdit.append("(ERP)")
                 self.textEdit.append("M5")    
         else:        
