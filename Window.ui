@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1307</width>
-    <height>852</height>
+    <width>1274</width>
+    <height>834</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -395,21 +395,6 @@
          </property>
         </widget>
        </item>
-      </layout>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_4">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>530</y>
-        <width>221</width>
-        <height>151</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Косой зуб</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QCheckBox" name="checkBoxKoc">
          <property name="enabled">
@@ -420,6 +405,21 @@
          </property>
         </widget>
        </item>
+      </layout>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_4">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>520</y>
+        <width>221</width>
+        <height>171</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Косой зуб</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLabel" name="label_9">
          <property name="text">
@@ -428,7 +428,25 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEditUgol"/>
+        <widget class="QLineEdit" name="lineEditUgol">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>Реальный диаметр</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEditDiametr">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="checkBoxKosLev">
@@ -544,7 +562,7 @@
      <widget class="QLabel" name="label_40">
       <property name="geometry">
        <rect>
-        <x>150</x>
+        <x>180</x>
         <y>10</y>
         <width>381</width>
         <height>20</height>
@@ -562,7 +580,7 @@
      <widget class="QLineEdit" name="lineEdit_2">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>260</x>
         <y>40</y>
         <width>381</width>
         <height>21</height>
@@ -576,9 +594,9 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>80</y>
+        <y>20</y>
         <width>131</width>
-        <height>601</height>
+        <height>661</height>
        </rect>
       </property>
      </widget>
@@ -590,7 +608,7 @@
       <x>10</x>
       <y>20</y>
       <width>201</width>
-      <height>691</height>
+      <height>701</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -626,7 +644,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>710</y>
+      <y>730</y>
       <width>121</width>
       <height>32</height>
      </rect>
@@ -639,7 +657,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>740</y>
+      <y>760</y>
       <width>121</width>
       <height>32</height>
      </rect>
@@ -652,9 +670,9 @@
     <property name="geometry">
      <rect>
       <x>920</x>
-      <y>50</y>
+      <y>20</y>
       <width>351</width>
-      <height>351</height>
+      <height>381</height>
      </rect>
     </property>
     <property name="title">
@@ -671,7 +689,7 @@
      <item row="1" column="1">
       <widget class="QDoubleSpinBox" name="doubleSpinBox_m">
        <property name="decimals">
-        <number>3</number>
+        <number>0</number>
        </property>
        <property name="value">
         <double>28.000000000000000</double>
@@ -681,13 +699,13 @@
      <item row="2" column="1">
       <widget class="QDoubleSpinBox" name="doubleSpinBox_Z">
        <property name="decimals">
-        <number>3</number>
+        <number>0</number>
        </property>
        <property name="minimum">
         <double>5.000000000000000</double>
        </property>
        <property name="maximum">
-        <double>500.990000000000009</double>
+        <double>501.000000000000000</double>
        </property>
        <property name="value">
         <double>94.000000000000000</double>
@@ -851,7 +869,7 @@
       <x>920</x>
       <y>400</y>
       <width>351</width>
-      <height>311</height>
+      <height>321</height>
      </rect>
     </property>
     <property name="title">
@@ -1015,7 +1033,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1307</width>
+     <width>1274</width>
      <height>22</height>
     </rect>
    </property>
