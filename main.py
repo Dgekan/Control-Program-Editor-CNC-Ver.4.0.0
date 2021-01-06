@@ -345,18 +345,31 @@ class MyWindow(QMainWindow):
         self.lineEditDiametr.setText(str(da))        
         self.GragEvolvent(List_Minus_Xei+List_Minus_Xpki,List_Yei+List_Ypki)
         self.TextEvolvent(List_Xei+List_Xpki,List_Yei+List_Ypki,da/2)
-       
+        self.texttochek(List_Xei+List_Xpki,List_Yei+List_Ypki)
         self.WiPfileZub(List_Yei,List_Xei,List_Minus_Xei,List_Ypki,List_Xpki,List_Minus_Xpki,
             List_Ydai,List_Xdai)
 
+    def texttochek(self,AxisX,AxisZ):
+
+        self.textEdit_toch.clear()
+        i=0 
+        self.textEdit_toch.append("n "+"   X     "+"      ,"+"   Z")      
+        for i in range(len(AxisX)):
+           
+            Var_X = AxisX[i]
+           
+            Var_Z = AxisZ[i]
+             
+            self.textEdit_toch.append(str(i+1)+" , "+str(round(Var_X,3))+" , "+str(round(Var_Z,3)))
+
+
     def WiPfileZub(self,Yei,Xei,Minus_Xei,Ypki,Xpki,Minus_Xpki,Ydai,Xdai):
         """   Рисуем профиль зуба 
-              
-             
+         
         """
         #Отправляем листы на прорисовку в график 
         if WiZubValue == True:
-       
+           
             self.plot(Yei,Xei, "Evalvent", 'b')
             self.plot(Yei,Minus_Xei, "mEvalvent", 'b')
 
@@ -386,6 +399,7 @@ class MyWindow(QMainWindow):
         """
         List_Axis_X=[]
         List_Axis_Z=[]
+   
         global n
         i=0
         for i in range(len(AxisX)):
@@ -434,6 +448,7 @@ class MyWindow(QMainWindow):
             file.write(str(round(-Var_X,3))+","+(str(round(-Var_Z,3)))+"\n")
         
         if WiEvolventValue == True:    
+           
            self.plot(ListZ,ListX, "Prog", 'w')    
         
         f = open("CSv.csv", 'r')
@@ -445,6 +460,7 @@ class MyWindow(QMainWindow):
         with file:
             if mytext.count(';') <= mytext.count(','):
                 reader = csv.reader(file, delimiter = ',')
+               
                 self.model.clear()
                 for row in reader:    
                     items = [QtGui.QStandardItem(field) for field in row]
@@ -766,7 +782,7 @@ class MyWindow(QMainWindow):
         if DFreza and ExitFreza and VisotaYAxis:
            E30 = (int(DFreza)/2)+(int(ExitFreza)*2)+int(VisotaYAxis)
         else:
-           E30=""   
+           E30=0
         M3 = self.lineEditAxisS.text()
         UAO = self.lineEditOra.text()
         RPT = self.lineEditKolZub.text()
@@ -838,16 +854,16 @@ class MyWindow(QMainWindow):
                             for ii in range(len(fi)):
                                 z= fi[ii] 
                             no=no+1
-                            self.textEdit.append("N"+str(no)+" X"+x+"  Z-"+z+" FE25")
+                            self.textEdit.append("N"+str(no) + " X" + x + "  Z-" + z + " FE25")
                             no=no+1
-                            self.textEdit.append("N"+str(no)+" YE30 FE26")
+                            self.textEdit.append("N"+str(no) + " YE30 FE26")
                             no=no+1
-                            self.textEdit.append("N"+str(no)+" X-"+x)
+                            self.textEdit.append("N"+str(no) + " X-" + x)
                             no=no+1
-                            self.textEdit.append("N"+str(no)+" Y0 FE26")
+                            self.textEdit.append("N"+str(no) + " Y0 FE26")
                             self.textEdit.append(" Угол " + str(angi_B))
                             self.texUgol()
-                        self.textEdit.append("M5")
+                    self.textEdit.append("M5")
             
                 
                 else:
@@ -885,7 +901,7 @@ class MyWindow(QMainWindow):
                             self.textEdit.append("N"+str(no)+" Y0 FE26")
                             self.textEdit.append(" Другой Угол " + str(angi_B))
                             self.texUgol()
-                        self.textEdit.append("M5")
+                    self.textEdit.append("M5")
                       
             else:
                 #print("Опять не ок ")   
