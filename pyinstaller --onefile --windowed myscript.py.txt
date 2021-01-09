@@ -1,0 +1,19 @@
+mkdir project
+cd project
+python -m venv env
+cd env
+cd ..
+C:\Users\User\project\env> cd Scripts
+C:\Users\User\project\env\Scripts>activate.bat
+cd ..
+C:\Users\User\project\env>pip install pyqtgraph
+C:\Users\User\project\env>pip install PyQt5
+C:\Users\User\project\env>pip install numpy
+C:\Users\User\project\env>pip install ezdxf
+C:\Users\User\project\env>pip install pyinstaller
+
+
+pyinstaller --onefile --windowed main.py
+
+C:\Users\User\project\env> cd Scripts
+C:\Users\User\project\env\Scripts>deactivate.bat
