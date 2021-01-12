@@ -4,7 +4,7 @@
 import csv,sys,os
 from PyQt5.QtWidgets import QMainWindow,QMessageBox
 from PyQt5 import QtCore, QtGui, QtWidgets, uic, QtPrintSupport
-from PyQt5.Qt import Qt
+from PyQt5.Qt import QLabel, QPixmap, Qt
 from numpy import math
 import pyqtgraph as pg
 import ezdxf
@@ -33,8 +33,8 @@ class MyWindow(QMainWindow):
         self.model =  QtGui.QStandardItemModel(self)
         self.model.appendRow(item)
         self.model.insertColumn(1)
-        self.model.setHeaderData(0,Qt.Horizontal,"Ось Х  ")
-        self.model.setHeaderData(1,Qt.Horizontal,"Ось Z  ") 
+        self.model.setHeaderData(0,Qt.Horizontal,"Х ")
+        self.model.setHeaderData(1,Qt.Horizontal,"Z") 
         self.tableView.resizeColumnsToContents()      
         self.tableView.setModel(self.model)
         self.tableView.setShowGrid(True)
@@ -70,6 +70,11 @@ class MyWindow(QMainWindow):
         self.radioButtonM6.pressed.connect(self.M6)
 
         self.Evolvent()
+
+        self.label = QLabel(self)
+        pixmap = QPixmap('logo.png')
+        self.label_pixel.setPixmap(pixmap)
+        self.resize(pixmap.width(), pixmap.height())
 
     def AddRow(self):
         """Добавляем новую строку
@@ -229,8 +234,8 @@ class MyWindow(QMainWindow):
         self.model.clear()
         self.model.appendRow(item)
         self.model.insertColumn(1)
-        self.model.setHeaderData(0,Qt.Horizontal,"Ось Х   ")
-        self.model.setHeaderData(1,Qt.Horizontal,"Ось Z   ") 
+        self.model.setHeaderData(0,Qt.Horizontal,"Ось Х ")
+        self.model.setHeaderData(1,Qt.Horizontal,"Ось Z") 
     
         self.lineEditAxisS.setText('0')
         self.lineEditAxisX.setText('0')
@@ -418,7 +423,7 @@ class MyWindow(QMainWindow):
         self.textEdit.clear()
 
         if ValkosZub and not ValNaklon:
-            self.textEdit.append("Косой правый Зуб!!!!")
+            self.textEdit.append(";Косой правый Зуб!!!!")
         elif ValkosZub and ValNaklon:    
             self.textEdit.append(";Косой левый Зуб !!!!")
         else:    
