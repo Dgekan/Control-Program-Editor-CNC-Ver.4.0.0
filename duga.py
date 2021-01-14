@@ -47,14 +47,12 @@ for e in msp:
     #    print(e,e.dxf.n_control_points)
     #    print(e,e.control_points)
 
-#print(lisx,lisy)
-x=np.array(lisx)
-print(x)
-c=np.msort(x)
-#y=np.array(lisy)
-#y.sort()
+print(lisx)
+c=np.array(lisx)
 print(c)
-
+a=sorted(lisx)
+b=np.array(a)
+print(b)
 
 # entity query for all LINE entities in modelspace
 #for e in msp.query('ARC'):
