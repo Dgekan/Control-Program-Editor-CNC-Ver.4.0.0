@@ -44,7 +44,7 @@ class MyWindow(QMainWindow):
         self.WriteCsv_Button.clicked.connect(self.WriteCsv)
         self.Button_Open_File.clicked.connect(self.Open_File)
         self.NewFile_Button.clicked.connect(self.NewFile)
-        self.Open_Dxf_Button.clicked.connect(self.OpenDXF)
+        self.Open_Dxf_Button.clicked.connect(self.OpenDXF1)
         self.GenerateProgramButon.clicked.connect(self.GenerateControlProg)
         self.WriteFile_CProg_Button.clicked.connect(self.WriteControlProg)
         self.Print_Button.clicked.connect(self.handlePrint)
@@ -284,6 +284,38 @@ class MyWindow(QMainWindow):
                 self.model.setHeaderData(1,Qt.Horizontal,"Ось Z   ")
                        
             self.tableView.resizeColumnsToContents()
+    def OpenDXF1(self):
+        """
+        docstring
+        """
+        list_Line=[]
+        List_SPLINE=[]
+        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть dxf файл",
+               (QtCore.QDir.homePath() + "/Volumes/dis/qtZub/zub/" + ".dxf"), "dxf (*.dxf)")
+        if fileName:
+            try:
+                doc = ezdxf.readfile("duga.dxf")
+            except IOError:
+                print(f'Not a DXF file or a generic I/O error.')
+                sys.exit(1)
+            except ezdxf.DXFStructureError:
+                print(f'Invalid or corrupted DXF file.')
+                sys.exit(2)      
+            msp = doc.modelspace()
+            for point in msp.query('*[layer=="'+str(self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex()))+'"]'):
+                
+                if point.dxftype() == 'LINE':
+                    list_Line.append(point.dxf.start)
+                    list_Line.append(point.dxf.end)
+
+                elif point.dxftype() == 'SPLINE':
+                    
+                    for i in point.control_points:
+                        List_SPLINE.append(i)
+
+            
+            LINE_ARC=sorted(list_Line)
+            print(LINE_ARC)
 
     def Kos(self,kosZub):
         """ Проверяем галочку  косой зуб
@@ -765,7 +797,8 @@ class MyWindow(QMainWindow):
            
         
         self.plots(List_Axis_X,List_Axis_Z, "Vpadina", 'g')
-         
+
+     
         
 
 if __name__ == "__main__":
