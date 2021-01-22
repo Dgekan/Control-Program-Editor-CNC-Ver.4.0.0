@@ -289,6 +289,7 @@ class MyWindow(QMainWindow):
         docstring
         """
         list_Line=[]
+        list_Line_model=[]
         List_SPLINE=[]
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть dxf файл",
                (QtCore.QDir.homePath() + "/Volumes/dis/qtZub/zub/" + ".dxf"), "dxf (*.dxf)")
@@ -302,20 +303,56 @@ class MyWindow(QMainWindow):
                 print(f'Invalid or corrupted DXF file.')
                 sys.exit(2)      
             msp = doc.modelspace()
+            a=0
             for point in msp.query('*[layer=="'+str(self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex()))+'"]'):
-                
+              
                 if point.dxftype() == 'LINE':
+                    len_line=len(msp.query('LINE[layer=="'+str(self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex()))+'"]'))
+                    a=a+1
                     list_Line.append(point.dxf.start)
-                    list_Line.append(point.dxf.end)
-
+                    if a == len_line:
+                        list_Line.append(point.dxf.end)
+                
                 elif point.dxftype() == 'SPLINE':
                     
                     for i in point.control_points:
                         List_SPLINE.append(i)
-
             
-            LINE_ARC=sorted(list_Line)
-            print(LINE_ARC)
+
+            _List_LINE=sorted(list_Line)
+            
+            x_list_LINE = z_list_LINE = x_list_SPLINE = z_list_SPLINE =[]
+            
+            for i in _List_LINE:
+                x_list_LINE.append(i[0])
+                z_list_LINE.append(i[1])
+
+            for i in List_SPLINE:
+                x_list_SPLINE.append(i[0])
+                z_list_SPLINE.append(i[1])
+
+           # print(x_list_LINE,z_list_LINE)
+           # print(x_list_SPLINE,z_list_SPLINE)
+                        
+            self.plots(x_list_LINE,z_list_LINE,"plotname","b")
+            self.plots(x_list_SPLINE,z_list_SPLINE,"plotname","g")
+
+            self.model.clear()
+            for row in _List_LINE:    
+                items = [QtGui.QStandardItem(str(round(field,3))) for field in row]
+                self.model.appendRow(items)
+                self.model.setHeaderData(0,Qt.Horizontal,"Ось Х   ")
+                self.model.setHeaderData(1,Qt.Horizontal,"Ось Z   ")
+                       
+            self.tableView.resizeColumnsToContents()
+            for row in List_SPLINE:    
+                items = [QtGui.QStandardItem(str(round(field,3))) for field in row]
+                self.model.appendRow(items)
+                self.model.setHeaderData(0,Qt.Horizontal,"Ось Х   ")
+                self.model.setHeaderData(1,Qt.Horizontal,"Ось Z   ")
+                       
+            self.tableView.resizeColumnsToContents()
+
 
     def Kos(self,kosZub):
         """ Проверяем галочку  косой зуб
