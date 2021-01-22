@@ -295,13 +295,17 @@ class MyWindow(QMainWindow):
                (QtCore.QDir.homePath() + "/Volumes/dis/qtZub/zub/" + ".dxf"), "dxf (*.dxf)")
         if fileName:
             try:
-                doc = ezdxf.readfile("duga.dxf")
+                doc = ezdxf.readfile(fileName)
             except IOError:
-                print(f'Not a DXF file or a generic I/O error.')
+                QMessageBox.question(self,'Внимание', "Не файл DXF или обычная ошибка ввода-вывода.", QMessageBox.Ok)
+                #print(f'Not a DXF file or a generic I/O error.')
                 sys.exit(1)
+               
             except ezdxf.DXFStructureError:
-                print(f'Invalid or corrupted DXF file.')
-                sys.exit(2)      
+                QMessageBox.question(self,'Внимание', "Неверный или поврежденный файл DXF.", QMessageBox.Ok)
+               # print(f'Invalid or corrupted DXF file.')
+                sys.exit(2)  
+                
             msp = doc.modelspace()
             a=0
             for point in msp.query('*[layer=="'+str(self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex()))+'"]'):
@@ -445,7 +449,6 @@ class MyWindow(QMainWindow):
         nom=0
         
         Obrab = self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex())
-        DFreza = self.lineEditDFreza.text()
         E25 = self.lineEditAxisX.text()
         E26 = self.lineEditAxisY.text()
         VisotaYAxis = self.lineEditVisota.text()
