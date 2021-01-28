@@ -16,7 +16,8 @@ ValkosZub=False
 ValNaklon=False
 ValM6 = "M66"
 Axis=" Z-"
-
+X_max=0
+Z_max=0
 class MyWindow(QMainWindow):
     def __init__(self,parent=None):
         super().__init__(parent)
@@ -329,8 +330,8 @@ class MyWindow(QMainWindow):
             z_list_SPLINE =[]
             x_list_LINE=[]
             z_list_LINE=[]
+
             for i in list_Line:
-               
                 x_list_LINE.append(float(i[0]))
                 z_list_LINE.append(float(i[1]))  
 
@@ -339,12 +340,20 @@ class MyWindow(QMainWindow):
                 z_list_SPLINE.append(float(i[1]))
 
             X_list=[] 
-            Z_list=[]    
+            Z_list=[]  
+
             X_list.extend(x_list_LINE)
             X_list.extend(x_list_SPLINE)   
             Z_list.extend(z_list_LINE) 
             Z_list.extend(z_list_SPLINE)  
-            self.plots(X_list,Z_list,"plotname","b")
+
+            self.plots(X_list,Z_list,"DXF","b")
+
+            global X_max
+            X_max = round(X_list[0] + 5)
+           
+            global Z_max
+            Z_max = round(Z_list[len(Z_list) -1 ] + 2 )
             
             self.model.clear()
             for row in list_Line:    
@@ -495,7 +504,7 @@ class MyWindow(QMainWindow):
             ";Обработка "+Obrab,";Диаметр фрезы D "+str(DFreza),";Скорость подачи по Х и Z","E25="+str(E25),
                   ";Скорость подачи по Y","E26="+str(E26),";Высота по Y","E30="+str(E30),";Номер корректора","T1.3 " + ValM6,
                   ";Начальная точка","(UAO,"+str(UAO)+")","(UOT,"+str(UAO)+",Y0,Z0,W0)",";Скорость оборотов шпинделя","M3 S"+str(M3),
-                  "G90G01 X0 Y0 W0 Z0 F1500","(UCG,2,X-100X100,Y20Y60,Z-150Z0,1,-5)",
+                  "G90G01 X0 Y0 W0 Z0 F1500","(UCG,2,X-"+ str(X_max) + "X" + str(X_max) + " ,Y20Y"+str(E30)+",Z-"+str(Z_max)+"Z0,1,-5)",
                   "(RPT,"+str(z)+")","E1="+str(z),"#TIM1=TIM0"]
         self.textEdit.clear()
 
