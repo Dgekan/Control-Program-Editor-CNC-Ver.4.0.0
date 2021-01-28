@@ -323,26 +323,31 @@ class MyWindow(QMainWindow):
                         List_SPLINE.append(i)
             
 
-            _List_LINE=sorted(list_Line)
+           # _List_LINE=sorted(list_Line)
             
-            x_list_LINE = z_list_LINE = x_list_SPLINE = z_list_SPLINE =[]
-            
-            for i in _List_LINE:
-                x_list_LINE.append(i[0])
-                z_list_LINE.append(i[1])
+            x_list_SPLINE =[]
+            z_list_SPLINE =[]
+            x_list_LINE=[]
+            z_list_LINE=[]
+            for i in list_Line:
+               
+                x_list_LINE.append(float(i[0]))
+                z_list_LINE.append(float(i[1]))  
 
             for i in List_SPLINE:
-                x_list_SPLINE.append(i[0])
-                z_list_SPLINE.append(i[1])
+                x_list_SPLINE.append(float(i[0]))
+                z_list_SPLINE.append(float(i[1]))
 
-           # print(x_list_LINE,z_list_LINE)
-           # print(x_list_SPLINE,z_list_SPLINE)
-                        
-            self.plots(x_list_LINE,z_list_LINE,"plotname","b")
-            self.plots(x_list_SPLINE,z_list_SPLINE,"plotname","g")
-
+            X_list=[] 
+            Z_list=[]    
+            X_list.extend(x_list_LINE)
+            X_list.extend(x_list_SPLINE)   
+            Z_list.extend(z_list_LINE) 
+            Z_list.extend(z_list_SPLINE)  
+            self.plots(X_list,Z_list,"plotname","b")
+            
             self.model.clear()
-            for row in _List_LINE:    
+            for row in list_Line:    
                 items = [QtGui.QStandardItem(str(round(field,3))) for field in row]
                 self.model.appendRow(items)
                 self.model.setHeaderData(0,Qt.Horizontal,"Ось Х   ")
