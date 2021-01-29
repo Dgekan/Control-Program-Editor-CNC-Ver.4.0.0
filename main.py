@@ -16,8 +16,10 @@ ValkosZub=False
 ValNaklon=False
 ValM6 = "M66"
 Axis=" Z-"
+AxisP="Z"
 X_max=0
 Z_max=0
+fileName=''
 class MyWindow(QMainWindow):
     def __init__(self,parent=None):
         super().__init__(parent)
@@ -45,12 +47,13 @@ class MyWindow(QMainWindow):
         self.WriteCsv_Button.clicked.connect(self.WriteCsv)
         self.Button_Open_File.clicked.connect(self.Open_File)
         self.NewFile_Button.clicked.connect(self.NewFile)
-        self.Open_Dxf_Button.clicked.connect(self.OpenDXF1)
+        self.Open_Dxf_Button.clicked.connect(self.OpenDXF)
         self.GenerateProgramButon.clicked.connect(self.GenerateControlProg)
         self.WriteFile_CProg_Button.clicked.connect(self.WriteControlProg)
         self.Print_Button.clicked.connect(self.handlePrint)
         self.Wi_print_Button.clicked.connect(self.handlePreview)  
         self.pushButtonEvolvent.clicked.connect(self.Evolvent)        
+        self.pushButton.clicked.connect(self.Oproge)
 
         self.checkBoxClearPlot.stateChanged.connect(self.ClearGrafik)
         self.checkBoxKoc.stateChanged.connect(self.Kos)
@@ -70,12 +73,16 @@ class MyWindow(QMainWindow):
         self.radioButtonM66.pressed.connect(self.M66)
         self.radioButtonM6.pressed.connect(self.M6)
 
+       # self.comboBoxProcess.connect(self.Open_layer)
+        self.comboBoxProcess.activated[str].connect(self.Open_layer)
         self.Evolvent()
 
         self.label = QLabel(self)
         pixmap = QPixmap('logo.png')
         self.label_pixel.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
+    def Oproge(self):
+        QMessageBox.question(self,' О программе', "Если что-то не так работает  \nПишите в 'ЛАИТ' \ndgekan@gmail.com \nЗырянов Е.Г. \nИСПРАВИМ!!!", QMessageBox.Ok)
 
     def AddRow(self):
         """Добавляем новую строку
@@ -112,8 +119,8 @@ class MyWindow(QMainWindow):
                     fields = [self.model.data(self.model.index(rowNumber, columnNumber),Qt.DisplayRole)
                         for columnNumber in range(self.model.columnCount())]
                     writer.writerow(fields)
-                    fname = os.path.splitext(str(fileName))[0].split("/")[-1] 
-                    self.setWindowTitle(fname)
+                    fname = " Файл " + os.path.splitext(str(fileName))[0].split("/")[-1] 
+                    self.setWindowTitle("Control Program Editor CNC. Ver.4.0.0 " + fname +".csv")
     
             SAxis = self.lineEditAxisS.text()
             XAxis = self.lineEditAxisX.text()
@@ -173,11 +180,11 @@ class MyWindow(QMainWindow):
             f.close()
 
             file = open(fileName, 'r')
-            self.lineEdit.setText("Открыли файл - " + fileName)
-           
+            
             with file:
-                fname = os.path.splitext(str(fileName))[0].split("/")[-1]
-                self.setWindowTitle(fname)
+                fname = " файл " + os.path.splitext(str(fileName))[0].split("/")[-1]
+                self.setWindowTitle("Control Program Editor CNC. Ver.4.0.0 " + fname + ".csv")
+                self.label_File.setText("Открыли " + fname + ".csv")
                 if mytext.count(';') <= mytext.count(','):
                     reader = csv.reader(file, delimiter = ',')
                              
@@ -229,7 +236,9 @@ class MyWindow(QMainWindow):
         """Заполняем таблицу нулями
         """
         fileName="NewFile.csv"
-        self.lineEdit.setText("Открыли файл - " + fileName)
+        fname = " файл " + os.path.splitext(str(fileName))[0].split("/")[-1]
+        self.setWindowTitle("Control Program Editor CNC. Ver.4.0.0 " + fname +".csv")
+        self.label_File.setText("Открыли " + fname + ".csv")
         item = QtGui.QStandardItem()
         
         self.model.clear()
@@ -253,10 +262,20 @@ class MyWindow(QMainWindow):
         """
         Читаем  DXF фаил
         """
-        list_line=[]
-        
+        global fileName    
+
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть dxf файл",
                (QtCore.QDir.homePath() + "/Volumes/dis/qtZub/zub/" + ".dxf"), "dxf (*.dxf)")
+        fname = " файл- "+os.path.splitext(str(fileName))[0].split("/")[-1]
+        self.setWindowTitle("Control Program Editor CNC. Ver.4.0.0" + fname + ".dxf")
+
+        self.label_File.setText("Открыли " + fname + ".dxf")
+        self.Open_layer()
+
+    def Open_layer1(self): 
+       
+        list_line=[] 
+
         if fileName:
             doc = ezdxf.readfile(fileName)
    
@@ -285,15 +304,18 @@ class MyWindow(QMainWindow):
                 self.model.setHeaderData(1,Qt.Horizontal,"Ось Z   ")
                        
             self.tableView.resizeColumnsToContents()
-    def OpenDXF1(self):
+            
+    def Open_layer(self):
         """
         docstring
         """
+       
         list_Line=[]
         list_Line_model=[]
         List_SPLINE=[]
-        fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть dxf файл",
-               (QtCore.QDir.homePath() + "/Volumes/dis/qtZub/zub/" + ".dxf"), "dxf (*.dxf)")
+       
+      #  fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть dxf файл",
+     #          (QtCore.QDir.homePath() + "/Volumes/dis/qtZub/zub/" + ".dxf"), "dxf (*.dxf)")
         if fileName:
             try:
                 doc = ezdxf.readfile(fileName)
@@ -301,12 +323,12 @@ class MyWindow(QMainWindow):
                 QMessageBox.question(self,'Внимание', "Не файл DXF или обычная ошибка ввода-вывода.", QMessageBox.Ok)
                 #print(f'Not a DXF file or a generic I/O error.')
                 sys.exit(1)
-               
+              #  self.OpenDXF()
             except ezdxf.DXFStructureError:
                 QMessageBox.question(self,'Внимание', "Неверный или поврежденный файл DXF.", QMessageBox.Ok)
                # print(f'Invalid or corrupted DXF file.')
                 sys.exit(2)  
-                
+               #self.OpenDXF() 
             msp = doc.modelspace()
             a=0
             for point in msp.query('*[layer=="'+str(self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex()))+'"]'):
@@ -349,11 +371,12 @@ class MyWindow(QMainWindow):
 
             self.plots(X_list,Z_list,"DXF","b")
 
-            global X_max
-            X_max = round(X_list[0] + 5)
+            if len(X_list)>0:
+                global X_max
+                X_max = round(X_list[0] + 5)
            
-            global Z_max
-            Z_max = round(Z_list[len(Z_list) -1 ] + 2 )
+                global Z_max
+                Z_max = round(Z_list[len(Z_list) -1 ] + 2 )
             
             self.model.clear()
             for row in list_Line:    
@@ -370,7 +393,7 @@ class MyWindow(QMainWindow):
                 self.model.setHeaderData(1,Qt.Horizontal,"Ось Z   ")
                        
             self.tableView.resizeColumnsToContents()
-
+            self.GenerateControlProg()
 
     def Kos(self,kosZub):
         """ Проверяем галочку  косой зуб
@@ -450,11 +473,13 @@ class MyWindow(QMainWindow):
         """
         """
         global Axis
+        global AxisP
         if val ==Qt.Checked:
             Axis="  W-"
+            AxisP="W"
         else:
             Axis="  Z-"       
-
+            AxisP="Z"
     def GenerateControlProg(self):
         """
         Генерируем код управляющей программы
@@ -502,9 +527,9 @@ class MyWindow(QMainWindow):
 
         listText=[";ЛАИТ",";Program created",";automatically",";Дата создания "+datatext,
             ";Обработка "+Obrab,";Диаметр фрезы D "+str(DFreza),";Скорость подачи по Х и Z","E25="+str(E25),
-                  ";Скорость подачи по Y","E26="+str(E26),";Высота по Y","E30="+str(E30),";Номер корректора","T1.3 " + ValM6,
-                  ";Начальная точка","(UAO,"+str(UAO)+")","(UOT,"+str(UAO)+",Y0,Z0,W0)",";Скорость оборотов шпинделя","M3 S"+str(M3),
-                  "G90G01 X0 Y0 W0 Z0 F1500","(UCG,2,X-"+ str(X_max) + "X" + str(X_max) + " ,Y20Y"+str(E30)+",Z-"+str(Z_max)+"Z0,1,-5)",
+                  ";Скорость подачи по Y","E26="+str(E26),";Высота по Y","E30="+str(E30),";Номер корректора","T1.1 " + ValM6,
+                  ";Начальная точка","(UAO,"+str(UAO)+")",";(UOT,"+str(UAO)+",Y0,Z0,W0)",";Скорость оборотов шпинделя","M3 S"+str(M3),
+                  "G90G01 X0 Y0 W0 Z0 F1500","(UCG,2,X-"+ str(X_max) + "X" + str(X_max) + " ,Y20Y"+str(E30)+","+AxisP+"-"+str(Z_max)+AxisP+"0,1,-5)",
                   "(RPT,"+str(z)+")","E1="+str(z),"#TIM1=TIM0"]
         self.textEdit.clear()
 
@@ -527,7 +552,8 @@ class MyWindow(QMainWindow):
         if printt:
             for rowNumber in range(self.model.rowCount()):
                 n=n+1
-                self.textEdit.append(";Проход № "+str(n))
+               # self.textEdit.append(";Проход № "+str(n))
+                self.textEdit.append('(DIS," Время- ",TOT2, " Проход № '+str(n)+'") ')
                 fii = [self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
                 fi = [self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
                 if self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole) == None or fii == [''] or fi == ['']:
@@ -570,14 +596,14 @@ class MyWindow(QMainWindow):
                         bAxis=round(360/int(z),3)  
 
 
-            self.textEdit.append("")
+           
             self.textEdit.append("G90 Z0 F1000")
             self.textEdit.append("G91 G01 B-"+str(bAxis)+" F150" )
             self.textEdit.append("G90 G01 X0 Y0 W0 F 1500")
-            self.textEdit.append("# TOTO=TIMO-TIM1")
-            self.textEdit.append("TOT1=TOTO*E1")
+            self.textEdit.append("#TOT0=TIM0-TIM1")
+            self.textEdit.append("TOT1=TOT0*E1")
             self.textEdit.append("TOT2=TOT1/3600")
-            self.textEdit.append("(DIS,E1,TOT2)")
+           # self.textEdit.append("(DIS,E1,TOT2)")
             self.textEdit.append("(ERP)")
             self.textEdit.append("M5")
 
