@@ -2,9 +2,10 @@
 # Control-Program-Editor-CNC-Ver.4.0.0
 
 import csv,sys,os
+from typing import List
 from PyQt5.QtWidgets import QMainWindow,QMessageBox
 from PyQt5 import QtCore, QtGui, QtWidgets, uic, QtPrintSupport
-from PyQt5.Qt import QLabel, QPixmap, Qt
+from PyQt5.Qt import Qt,QLabel, QPixmap
 from numpy import math
 import pyqtgraph as pg
 import ezdxf
@@ -12,14 +13,15 @@ import datetime
 
 
 Clear_plots = True
-ValkosZub=False
-ValNaklon=False
+ValkosZub = False
+ValNaklon = False
 ValM6 = "M66"
-Axis=" Z-"
-AxisP="Z"
-X_max=0
-Z_max=0
+Axis =" Z-"
+AxisPrint="Z"
+X_max = 0
+Z_max = 0
 fileName=''
+
 class MyWindow(QMainWindow):
     def __init__(self,parent=None):
         super().__init__(parent)
@@ -36,8 +38,8 @@ class MyWindow(QMainWindow):
         self.model =  QtGui.QStandardItemModel(self)
         self.model.appendRow(item)
         self.model.insertColumn(1)
-        self.model.setHeaderData(0,Qt.Horizontal,"Х ")
-        self.model.setHeaderData(1,Qt.Horizontal,"Z") 
+        self.model.setHeaderData(0,Qt.Horizontal,"Ось Х  ")
+        self.model.setHeaderData(1,Qt.Horizontal,"Ось Z  ") 
         self.tableView.resizeColumnsToContents()      
         self.tableView.setModel(self.model)
         self.tableView.setShowGrid(True)
@@ -52,8 +54,8 @@ class MyWindow(QMainWindow):
         self.WriteFile_CProg_Button.clicked.connect(self.WriteControlProg)
         self.Print_Button.clicked.connect(self.handlePrint)
         self.Wi_print_Button.clicked.connect(self.handlePreview)  
-        self.pushButtonEvolvent.clicked.connect(self.Evolvent)        
-        self.pushButton.clicked.connect(self.Oproge)
+        self.pushButtonEvolvent.clicked.connect(self.Evolvent)
+        self.pushButton.clicked.connect(self.Oproge)        
 
         self.checkBoxClearPlot.stateChanged.connect(self.ClearGrafik)
         self.checkBoxKoc.stateChanged.connect(self.Kos)
@@ -73,16 +75,18 @@ class MyWindow(QMainWindow):
         self.radioButtonM66.pressed.connect(self.M66)
         self.radioButtonM6.pressed.connect(self.M6)
 
-       # self.comboBoxProcess.connect(self.Open_layer)
         self.comboBoxProcess.activated[str].connect(self.Open_layer)
+
         self.Evolvent()
 
         self.label = QLabel(self)
         pixmap = QPixmap('logo.png')
         self.label_pixel.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
+
     def Oproge(self):
         QMessageBox.question(self,' О программе', "Если что-то не так работает  \nПишите в 'ЛАИТ' \ndgekan@gmail.com \nЗырянов Е.Г. \nИСПРАВИМ!!!", QMessageBox.Ok)
+
 
     def AddRow(self):
         """Добавляем новую строку
@@ -172,8 +176,9 @@ class MyWindow(QMainWindow):
         #Читаем имя файла из вджита
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть CSV файл",
                (QtCore.QDir.homePath() + "/Volumes/dis/qtZub/zub/" + ".csv"), "CSV (*.csv *.tsv)")
+              
         # проверяем наличие имя файла 
-        if fileName[0]:#!= ('', '')
+        if fileName != '':#!= ('', '')
        
             f = open(fileName, 'r')
             mytext = f.read()
@@ -181,6 +186,7 @@ class MyWindow(QMainWindow):
 
             file = open(fileName, 'r')
             
+           
             with file:
                 fname = " файл " + os.path.splitext(str(fileName))[0].split("/")[-1]
                 self.setWindowTitle("Control Program Editor CNC. Ver.4.0.0 " + fname + ".csv")
@@ -239,13 +245,14 @@ class MyWindow(QMainWindow):
         fname = " файл " + os.path.splitext(str(fileName))[0].split("/")[-1]
         self.setWindowTitle("Control Program Editor CNC. Ver.4.0.0 " + fname +".csv")
         self.label_File.setText("Открыли " + fname + ".csv")
+
         item = QtGui.QStandardItem()
         
         self.model.clear()
         self.model.appendRow(item)
         self.model.insertColumn(1)
-        self.model.setHeaderData(0,Qt.Horizontal,"Ось Х ")
-        self.model.setHeaderData(1,Qt.Horizontal,"Ось Z") 
+        self.model.setHeaderData(0,Qt.Horizontal,"Ось Х   ")
+        self.model.setHeaderData(1,Qt.Horizontal,"Ось Z   ") 
     
         self.lineEditAxisS.setText('0')
         self.lineEditAxisX.setText('0')
@@ -262,6 +269,8 @@ class MyWindow(QMainWindow):
         """
         Читаем  DXF фаил
         """
+        
+        
         global fileName    
 
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть dxf файл",
@@ -272,50 +281,9 @@ class MyWindow(QMainWindow):
         self.label_File.setText("Открыли " + fname + ".dxf")
         self.Open_layer()
 
-    def Open_layer1(self): 
-       
-        list_line=[] 
-
-        if fileName:
-            doc = ezdxf.readfile(fileName)
-   
-            msp = doc.modelspace()
-            for point in msp.query('LINE[layer=="'+str(self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex()))+'"]'):
-                point_list=[]
-                for i in range(0,2):
-                    point_list.append(str(round(point.dxf.start[i],3)))
-                list_line.append(point_list)
-            #print(list_line)  
-            x_list=[]
-            z_list=[]
-            for i in list_line:
-                #print(i)
-                x_list.append(float(i[0]))
-                z_list.append(float(i[1]))
-            #print(x_list,"  ",z_list)    
-            
-            self.plots(x_list,z_list,"plotname","b")
-            
-            self.model.clear()
-            for row in list_line:    
-                items = [QtGui.QStandardItem(field) for field in row]
-                self.model.appendRow(items)
-                self.model.setHeaderData(0,Qt.Horizontal,"Ось Х   ")
-                self.model.setHeaderData(1,Qt.Horizontal,"Ось Z   ")
-                       
-            self.tableView.resizeColumnsToContents()
-            
     def Open_layer(self):
-        """
-        docstring
-        """
-       
         list_Line=[]
-        list_Line_model=[]
-        List_SPLINE=[]
-       
-      #  fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Открыть dxf файл",
-     #          (QtCore.QDir.homePath() + "/Volumes/dis/qtZub/zub/" + ".dxf"), "dxf (*.dxf)")
+        List_SPLINE=[]       
         if fileName:
             try:
                 doc = ezdxf.readfile(fileName)
@@ -323,12 +291,12 @@ class MyWindow(QMainWindow):
                 QMessageBox.question(self,'Внимание', "Не файл DXF или обычная ошибка ввода-вывода.", QMessageBox.Ok)
                 #print(f'Not a DXF file or a generic I/O error.')
                 sys.exit(1)
-              #  self.OpenDXF()
+               
             except ezdxf.DXFStructureError:
                 QMessageBox.question(self,'Внимание', "Неверный или поврежденный файл DXF.", QMessageBox.Ok)
                # print(f'Invalid or corrupted DXF file.')
                 sys.exit(2)  
-               #self.OpenDXF() 
+                
             msp = doc.modelspace()
             a=0
             for point in msp.query('*[layer=="'+str(self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex()))+'"]'):
@@ -344,10 +312,7 @@ class MyWindow(QMainWindow):
                     
                     for i in point.control_points:
                         List_SPLINE.append(i)
-            
-
-           # _List_LINE=sorted(list_Line)
-            
+          
             x_list_SPLINE =[]
             z_list_SPLINE =[]
             x_list_LINE=[]
@@ -393,6 +358,7 @@ class MyWindow(QMainWindow):
                 self.model.setHeaderData(1,Qt.Horizontal,"Ось Z   ")
                        
             self.tableView.resizeColumnsToContents()
+
             self.GenerateControlProg()
 
     def Kos(self,kosZub):
@@ -455,6 +421,7 @@ class MyWindow(QMainWindow):
         self.label_da.setText(str(da))
         self.label_d.setText(str(d))
 
+
     def M6(self):
         """
         проверяем галочку м6
@@ -478,8 +445,9 @@ class MyWindow(QMainWindow):
             Axis="  W-"
             AxisP="W"
         else:
-            Axis="  Z-"       
-            AxisP="Z"
+            Axis="  Z-"
+            AxisP="Z"       
+
     def GenerateControlProg(self):
         """
         Генерируем код управляющей программы
@@ -488,13 +456,14 @@ class MyWindow(QMainWindow):
         nom=0
         
         Obrab = self.comboBoxProcess.itemText(self.comboBoxProcess.currentIndex())
+        DFreza = self.lineEditDFreza.text()
         E25 = self.lineEditAxisX.text()
         E26 = self.lineEditAxisY.text()
         VisotaYAxis = self.lineEditVisota.text()
         DFreza = self.lineEditDFreza.text()
         ExitFreza = self.lineEditVilet.text()
-        if DFreza and ExitFreza and VisotaYAxis:
-           E30 = (int(DFreza)/2)+(int(ExitFreza)*2)+float(VisotaYAxis)
+        if DFreza and VisotaYAxis:
+           E30 = (int(DFreza)/2) +float(VisotaYAxis)
         else:
            E30 = 0
         M3 = self.lineEditAxisS.text()
@@ -515,6 +484,8 @@ class MyWindow(QMainWindow):
         #Диаметр вершин зубьев
         da = d + 2 * (ha + x - y) * m
 
+        Ugol=self.lineEditUgol.text()
+
         data=datetime.datetime.now()
         datatext=data.strftime("%d-%m-%Y %H:%M") 
         
@@ -525,12 +496,23 @@ class MyWindow(QMainWindow):
         else:
             printt = True    
 
-        listText=[";ЛАИТ",";Program created",";automatically",";Дата создания "+datatext,
-            ";Обработка "+Obrab,";Диаметр фрезы D "+str(DFreza),";Скорость подачи по Х и Z","E25="+str(E25),
-                  ";Скорость подачи по Y","E26="+str(E26),";Высота по Y","E30="+str(E30),";Номер корректора","T1.1 " + ValM6,
-                  ";Начальная точка","(UAO,"+str(UAO)+")",";(UOT,"+str(UAO)+",Y0,Z0,W0)",";Скорость оборотов шпинделя","M3 S"+str(M3),
-                  "G90G01 X0 Y0 W0 Z0 F1500","(UCG,2,X-"+ str(X_max) + "X" + str(X_max) + " ,Y20Y"+str(E30)+","+AxisP+"-"+str(Z_max)+AxisP+"0,1,-5)",
-                  "(RPT,"+str(z)+")","E1="+str(z),"#TIM1=TIM0"]
+        listText=[";Диаметр фрезы D "+str(DFreza),";Скорость подачи по Х и Z","E25="+str(E25),
+                  ";Скорость подачи по Y","E26="+str(E26),";Номер корректора","T1.3 " + ValM6,
+                  ";Начальная точка","(UAO,"+str(UAO)+")","(UOT,"+str(UAO)+",Y0,Z0,W0)",";Скорость шпинделя","M3 S"+str(M3),
+                  "G90G01 X0 Y0 W0 Z0 F1500","(UCG,2,X-"+ str(X_max) + "X" + str(X_max) + " ,Y20Y"+str(E30)+","+AxisPrint+"-"+str(Z_max)+AxisPrint+"0,1,-5)"]
+
+        
+
+        listTextUlol=[";Угол поворота стола","E31="+str(Ugol),";Выход фрезы","E32="+str(ExitFreza),"E33=-E32","E35=-E30"]
+        
+        if not ValNaklon:
+            listTextUlol.append("E34=-E31")
+            listTextUlol.append("E36=E31")
+        else:
+            listTextUlol.append("E34=E31")
+            listTextUlol.append("E36=-E31")    
+
+
         self.textEdit.clear()
 
         if ValkosZub and not ValNaklon:
@@ -541,18 +523,33 @@ class MyWindow(QMainWindow):
             self.textEdit.append(";Прямой Зуб !!!!")
 
         self.textEdit.append(";"+self.lineEditComent.text())
+        self.textEdit.append(";ЛАИТ")
+        self.textEdit.append(";Дата создания "+datatext)
+        self.textEdit.append(";Обработка "+Obrab)
 
+        self.textEdit.append(";Высота по Y")
+        self.textEdit.append("E30="+str(E30))
+
+        if ValkosZub:
+            for i in range( len(listTextUlol)):
+                a=listTextUlol[i]
+            
+                self.textEdit.append(a)
 
         for i in range(len(listText)):
             y=listText[i] 
             
             self.textEdit.append(y)
         
+        self.textEdit.append("(RPT,"+str(z)+")")
+        self.textEdit.append("E1="+str(z))
+        self.textEdit.append("#TIM1=TIM0")
+
+
         xAxis=zAxis=bAxis=0
         if printt:
             for rowNumber in range(self.model.rowCount()):
                 n=n+1
-               # self.textEdit.append(";Проход № "+str(n))
                 self.textEdit.append('(DIS," Время- ",TOT2, " Проход № '+str(n)+'") ')
                 fii = [self.model.data(self.model.index(rowNumber,0),QtCore.Qt.DisplayRole)]
                 fi = [self.model.data(self.model.index(rowNumber,1),QtCore.Qt.DisplayRole)]
@@ -567,24 +564,23 @@ class MyWindow(QMainWindow):
                     for i in range(len(fi)):
                         zAxis= fi[i] 
                     nom=nom+1
-                    if ValkosZub and not ValNaklon:  
+                    if ValkosZub : 
                         self.textEdit.append("N" + str(nom) + " X" + xAxis + Axis + zAxis + " FE25")
                         nom=nom+1
-                        self.textEdit.append("N" + str(nom) + " YE30 FE26")
-                        nom=nom+1
-                        self.textEdit.append("N" + str(nom) + " X-" + xAxis)
-                        nom=nom+1
                         self.textEdit.append("N" + str(nom) + " Y0 FE26")
-                        self.textEdit.append(" Угол правый" )
-                    elif ValkosZub and ValNaklon:
-                        self.textEdit.append("N" + str(nom) + " X" + xAxis + Axis + zAxis + " FE25")
                         nom=nom+1
-                        self.textEdit.append("N" + str(nom) + " YE30 FE26")
+                        self.textEdit.append("N" + str(nom) + " YE30 BE34 FE26")
                         nom=nom+1
-                        self.textEdit.append("N" + str(nom) + " X-" + xAxis)
+                        self.textEdit.append("N" + str(nom) + " YE32 FE26")
                         nom=nom+1
-                        self.textEdit.append("N" + str(nom) + " Y0 FE26")
-                        self.textEdit.append(" Угол Левый " )
+                        self.textEdit.append("N" + str(nom) + " X-" + xAxis + " FE25")
+                        nom=nom+1
+                        self.textEdit.append("N" + str(nom) + " YE33 FE26")
+                        nom=nom+1
+                        self.textEdit.append("N" + str(nom) + " YE35 BE36 FE26")
+                        nom=nom+1
+                        self.textEdit.append("N" + str(nom) + " YE33 FE26")
+                                          
                     else:    
                         self.textEdit.append("N" + str(nom) + " X" + xAxis + Axis + zAxis + " FE25")
                         nom=nom+1
@@ -593,17 +589,17 @@ class MyWindow(QMainWindow):
                         self.textEdit.append("N" + str(nom) + " X-"+xAxis+" FE25")
                         nom=nom+1
                         self.textEdit.append("N" + str(nom) + " Y0 FE26")
-                        bAxis=round(360/int(z),3)  
+                        
 
-
-           
+            bAxis=round(360/int(z),3)  
+        #    self.textEdit.append("")
             self.textEdit.append("G90 Z0 F1000")
             self.textEdit.append("G91 G01 B-"+str(bAxis)+" F150" )
             self.textEdit.append("G90 G01 X0 Y0 W0 F 1500")
             self.textEdit.append("#TOT0=TIM0-TIM1")
             self.textEdit.append("TOT1=TOT0*E1")
             self.textEdit.append("TOT2=TOT1/3600")
-           # self.textEdit.append("(DIS,E1,TOT2)")
+        #    self.textEdit.append("(DIS,E1,TOT2)")
             self.textEdit.append("(ERP)")
             self.textEdit.append("M5")
 
@@ -830,6 +826,32 @@ class MyWindow(QMainWindow):
        # self.WiPfileZub(List_Yei,List_Xei,List_Minus_Xei,List_Ypki,List_Xpki,List_Minus_Xpki,List_Ydai,List_Xdai)
         self.GragEvolvent(List_Minus_Xei+List_Minus_Xpki,List_Yei+List_Ypki,n)
 
+        DFreza = self.lineEditDFreza.text()
+        VisotaYAxis = self.lineEditVisota.text()
+        Diametr = self.lineEditDiametr.text()
+        if DFreza and VisotaYAxis:
+            E30 = (int(DFreza)/2) +float(VisotaYAxis)
+        else:
+            E30 = 0
+        angi_B=0
+        if ValkosZub:
+            angie_A:float = 90# угол А треугольника по высоте детали 
+            angie_B:float = float(b) #угол B треугольника по высоте детали ( угол наклона зуба по чертежу)
+            angie_Y:float = 180 - (angie_A + angie_B) # трерий уго треугольника по высоте детали 
+            side_c:float = float(E30)# высота детали первая сторона треугольника 
+            side_a = side_c * math.sin(math.radians(angie_A)) / math.sin(math.radians(angie_Y))# вторая сторона треугольника 
+            side_b = side_c * math.sin(math.radians(angie_B)) / math.sin(math.radians(angie_Y))# третия сторона треугольника ( ось Х)
+            sid_a:float = float(Diametr)/2 # радиус детали первая и вторая тророны треугольника по торцу
+           # sid_a:float = float(self.lineEdit_da.text())/2 # радиус детали первая и вторая тророны треугольника по торцу
+            sid_c:float = sid_a
+            if sid_c < 10 :
+                sid_a:float = 10
+                sid_c:float = 10
+                angi_B = float('{:.3f}'.format(math.degrees(math.acos((sid_a**2+sid_c**2-side_b**2)/(2*sid_a*sid_c)))))
+                QMessageBox.about (self, "Ошибка " , "Диаметр шестерни задан меньше 20 мм. \n Введите риальный диаметр шестерни " )
+            else:
+                angi_B = float('{:.3f}'.format(math.degrees(math.acos((sid_a**2+sid_c**2-side_b**2)/(2*sid_a*sid_c)))))# результат угол поворота стола 
+
 
         self.label_da.setText(str(round(da,1)))
         self.label_d.setText(str(round(d,1)))
@@ -841,7 +863,8 @@ class MyWindow(QMainWindow):
         self.label_hf.setText(str(round(hf,1)))
         self.label_ha.setText(str(round(ha,1)))
         self.label_h.setText(str(round(h,1)))
-
+        self.lineEditDiametr.setText(str(da))
+        self.lineEditUgol.setText(str(angi_B))
 
     def WiPfileZub(self,Yei,Xei,Minus_Xei,Ypki,Xpki,Minus_Xpki,Ydai,Xdai):
         """   Рисуем профиль зуба 
@@ -877,8 +900,7 @@ class MyWindow(QMainWindow):
            
         
         self.plots(List_Axis_X,List_Axis_Z, "Vpadina", 'g')
-
-     
+         
         
 
 if __name__ == "__main__":
