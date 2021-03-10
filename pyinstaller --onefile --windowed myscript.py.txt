@@ -17,3 +17,21 @@ pyinstaller --onefile --windowed main.py
 
 C:\Users\User\project\env> cd Scripts
 C:\Users\User\project\env\Scripts>deactivate.bat
+
+Для мас 
+python -m venv testenv  
+source testenv/bin/activate
+
+pip install pyqtgraph
+pip install PyQt5
+pip install numpy
+pip install ezdxf
+pip install pyinstaller
+
+pip install -U py2app
+
+py2applet --make-setup main.py
+Очистите каталоги сборки
+rm -rf build dist
+python3 setup.py py2app
+forma.ui скопировать в dist/main.app/Contents/Resources
